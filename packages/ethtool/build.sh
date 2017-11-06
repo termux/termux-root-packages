@@ -6,10 +6,3 @@ TERMUX_PKG_SHA256=af2fd9692f3159d3ab1e41e6f9b7d8db2a4693f1cb22348c88ba89f70f0e65
 TERMUX_PKG_MAINTAINER="Auxilus @Auxilus"
 TERMUX_PKG_DEPENDS="libnl, libnl-dev" 
 TERMUX_PKG_BUILD_IN_SRC=yes
-
-termux_step_post_make_install () {
-
-        mv $TERMUX_PREFIX/sbin/* $TERMUX_PREFIX/bin/
-        rm $TERMUX_PREFIX/sbin -rf
-        
-}
