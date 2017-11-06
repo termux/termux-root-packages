@@ -6,8 +6,3 @@ TERMUX_PKG_SHA256=324cc805fad52cba2c16b9ab569906889fb645cc962aac4cfda1db85d2de97
 TERMUX_PKG_MAINTAINER="Auxilus @Auxilus"
 TERMUX_PKG_DEPENDS="libnl, libnl-dev, pkg-config"
 TERMUX_PKG_BUILD_IN_SRC=yes
-
-termux_step_post_configure () {
-      sed 's|SBINDIR|BINDIR|g' -i Makefile
-      sed 's|sbin|bin|g' -i Makefile
-} 
