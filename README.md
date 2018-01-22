@@ -8,5 +8,17 @@ To build a package, stand in the [termux-packages](https://github.com/termux/ter
 ./build-package.sh path-to-termux-root-packages/packages/package-to-build
 ```
 
-# Trying out a package
-For now you have to install the deb file manually. In short we will create a separate APT repo that root users can enable to install these packages.
+# Subscribing to the repository
+To install packages from this repository you need to subscribe to it. 
+Run these steps on your termux device:
+```bash
+# Needed by apt-key:
+pkg install dirmngr
+# Download key from keyserver:
+apt-key adv --keyserver pgp.mit.edu --recv A46BE53C
+mkdir -p $PREFIX/etc/apt/sources.list.d
+# Setup repo:
+echo "deb [trusted=yes] https://grimler.se root stable" > $PREFIX/etc/apt/sources.list.d/termux-root.list
+apt update
+```
+
