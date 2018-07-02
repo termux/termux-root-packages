@@ -13,7 +13,7 @@ To install packages from this repository you need to subscribe to it.
 Run these steps on your termux device:
 ```bash
 # Needed by apt-key:
-pkg install dirmngr gnupg-curl
+pkg install dirmngr gnupg2
 # Download key from keyserver:
 apt-key adv --keyserver pgp.mit.edu --recv A46BE53C
 mkdir -p $PREFIX/etc/apt/sources.list.d
