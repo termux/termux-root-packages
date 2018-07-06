@@ -18,7 +18,7 @@ pkg install dirmngr
 apt-key adv --keyserver pgp.mit.edu --recv 9B4E7D27395024EA5A4FC6395AAAC9E0A46BE53C
 mkdir -p $PREFIX/etc/apt/sources.list.d
 # Setup repo:
-echo "deb [trusted=yes] https://grimler.se root stable" > $PREFIX/etc/apt/sources.list.d/termux-root.list
+echo "deb https://grimler.se root stable" > $PREFIX/etc/apt/sources.list.d/termux-root.list
 apt update
 ```
 
