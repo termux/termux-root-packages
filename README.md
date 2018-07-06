@@ -15,7 +15,7 @@ Run these steps on your termux device:
 # Needed by apt-key:
 pkg install dirmngr
 # Download key from keyserver:
-apt-key adv --keyserver pgp.mit.edu --recv A46BE53C
+apt-key adv --keyserver pgp.mit.edu --recv 9B4E7D27395024EA5A4FC6395AAAC9E0A46BE53C
 mkdir -p $PREFIX/etc/apt/sources.list.d
 # Setup repo:
 echo "deb [trusted=yes] https://grimler.se root stable" > $PREFIX/etc/apt/sources.list.d/termux-root.list
