@@ -9,16 +9,8 @@ To build a package, stand in the [termux-packages](https://github.com/termux/ter
 ```
 
 # Subscribing to the repository
-To install packages from this repository you need to subscribe to it. 
-Run these steps on your termux device:
+To install packages from this repository you need to subscribe to it with:
 ```bash
-# Needed by apt-key:
-pkg install dirmngr
-# Download key from keyserver:
-apt-key adv --keyserver pgp.mit.edu --recv 9B4E7D27395024EA5A4FC6395AAAC9E0A46BE53C
-mkdir -p $PREFIX/etc/apt/sources.list.d
-# Setup repo:
-echo "deb https://grimler.se root stable" > $PREFIX/etc/apt/sources.list.d/termux-root.list
-apt update
+pkg install root-repo
 ```
 
