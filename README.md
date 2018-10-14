@@ -1,5 +1,5 @@
 # Termux root packages
-This repository is a work in progress to collect packages that are usable by root only.
+This repository contain packages that are useful for rooted users only.
 
 # Building a package
 To build a package, checkout the termux-root-packages
