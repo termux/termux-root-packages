@@ -21,7 +21,7 @@ To build from the docker container, termux-root-packages has to be a subfolder o
 ```sh
 ./build-package.sh termux-root-packages/packages/package-to-build
 ```
-The termux-package submodule is no longer needed after this.
+The termux-package submodule is not needed for this.
 
 # Subscribing to the repository
 To install packages from this repository, you need to subscribe to it with:
