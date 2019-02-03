@@ -31,9 +31,9 @@ except ModuleNotFoundError:
     sys.exit(1)
 
 # Repository configuration.
-REPO_NAME = "science-packages"
-REPO_GITHUB = "grimler91/science-packages"
-REPO_DISTRIBUTION = "science"
+REPO_NAME = "termux-root-packages"
+REPO_GITHUB = "termux/termux-root-packages"
+REPO_DISTRIBUTION = "root"
 REPO_COMPONENT = "stable"
 
 # This variable is determined automatically.
