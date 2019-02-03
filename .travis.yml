@@ -1,0 +1,42 @@
+language: generic
+
+## Force usage of "Ubuntu Xenial" as on older versions
+## program "realpath" is not working for some reason.
+os: linux
+dist: xenial
+services: docker
+sudo: required
+
+## Build environment is used as submodule so let
+## submodules will be checked out too.
+git:
+  submodules: true
+
+## Enable caching for build directory.
+## Note that "build-data" should be mounted in docker
+## container as /data. (See "scripts/travis-ci-build.sh")
+cache:
+  directories:
+    - build-data
+
+## Split per-architecture builds into separate jobs.
+env:
+  matrix:
+    - TERMUX_ARCH=aarch64
+      CACHE_NAME=aarch64-data
+    - TERMUX_ARCH=arm
+      CACHE_NAME=arm-data
+    - TERMUX_ARCH=i686
+      CACHE_NAME=i686-data
+    - TERMUX_ARCH=x86_64
+      CACHE_NAME=x86_64-data
+
+## Copy our packages to the build environment.
+before_script:
+  - mkdir -p ./build-data
+  - cp -a ./packages/* ./termux-packages/packages/
+  - cp ./scripts/setup-build-environment.sh ./termux-packages/
+
+## Execute build-dispatching script.
+script:
+  - ./scripts/travis-ci-build.sh "$TERMUX_ARCH"
