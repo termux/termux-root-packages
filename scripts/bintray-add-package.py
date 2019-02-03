@@ -250,7 +250,8 @@ def show_usage():
           "Credentials are specified via environment variables:\n"
           "\n"
           "  BINTRAY_USERNAME  - User or organization name.\n"
-          "  BINTRAY_API_KEY   - API key.\n")
+          "  BINTRAY_API_KEY   - API key.\n"
+          "  GPG_PASSPHRASE    - Password for secret signing key at bintray.\n")
 
 
 def main():
