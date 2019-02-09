@@ -1,34 +1,6 @@
---- ../configure.orig	2019-02-09 18:02:35.976650487 +0100
-+++ ./configure	2019-02-09 18:07:20.969981859 +0100
-@@ -10703,11 +10703,11 @@
- 
- done
- 
--		check_lib_no_libs dlm dlm_lock -lpthread
-+		check_lib_no_libs dlm dlm_lock
- 		if test $NOTFOUND = 0; then
- 			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no pkg for libdlm, using -ldlm" >&5
- $as_echo "no pkg for libdlm, using -ldlm" >&6; }
--			DLM_LIBS="-ldlm -lpthread"
-+			DLM_LIBS="-ldlm"
- 			HAVE_DLM=yes
- 		fi
- elif test $pkg_failed = untried; then
-@@ -10728,11 +10728,11 @@
- 
- done
- 
--		check_lib_no_libs dlm dlm_lock -lpthread
-+		check_lib_no_libs dlm dlm_lock
- 		if test $NOTFOUND = 0; then
- 			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no pkg for libdlm, using -ldlm" >&5
- $as_echo "no pkg for libdlm, using -ldlm" >&6; }
--			DLM_LIBS="-ldlm -lpthread"
-+			DLM_LIBS="-ldlm"
- 			HAVE_DLM=yes
- 		fi
- else
-@@ -13909,51 +13909,6 @@
+--- ../configure.orig	2019-02-09 20:02:01.143265848 +0100
++++ ./configure	2019-02-09 20:02:21.826599029 +0100
+@@ -12339,51 +12339,6 @@
    hard_bailout
  fi
  
