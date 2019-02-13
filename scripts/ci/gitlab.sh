@@ -72,7 +72,7 @@ fi
 ## or '--upload'.
 if [ $# -ge 1 ]; then
     if [ "$1" = "--upload" ]; then
-        exec "$REPO_DIR/scripts/bintray-add-package.py" --path "$DEBS_DIR" $PACKAGE_NAMES
+        exec "$REPO_DIR/scripts/bintray-add-package.sh" --path "$DEBS_DIR" $PACKAGE_NAMES
     else
         TERMUX_ARCH="$1"
     fi
