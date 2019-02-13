@@ -41,13 +41,13 @@ before_script:
   - mkdir -p /data
   - mkdir -p ./build-data/data/com.termux/files/usr
   - mount --bind ./build-data /data
-  - cp -a ./packages/* termux-packages/packages/
+  - cp -a ./packages/* ./termux-packages/packages/
 
 ## Common configuration for all build jobs.
 .job_template: &build_job
   stage: build
   script:
-    - bash ./scripts/gitlab-ci-build.sh $TERMUX_ARCH
+    - bash ./scripts/ci/gitlab.sh $TERMUX_ARCH
   retry:
     max: 2
     when:
@@ -108,7 +108,7 @@ upload-packages:
   only:
     - master@Grimler/termux-root-packages
   script:
-    - bash ./scripts/gitlab-ci-upload.sh
+    - bash ./scripts/ci/gitlab.sh --upload
   retry:
     max: 2
     when:
