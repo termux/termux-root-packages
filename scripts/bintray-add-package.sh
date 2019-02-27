@@ -30,7 +30,7 @@ fi
 declare -gA PACKAGE_METADATA
 
 # Initialize default configuration.
-DEBFILES_DIR_PATH="$TERMUX_PACKAGES_BASEDIR/deb-packages"
+DEBFILES_DIR_PATH="$TERMUX_PACKAGES_BASEDIR/debs"
 PACKAGE_DELETE_MODE=false
 
 # Bintray-specific configuration.
@@ -267,7 +267,11 @@ process_packages() {
             if [ -n "${PACKAGE_METADATA['REVISION']}" ]; then
                 PACKAGE_METADATA["VERSION_FULL"]="${PACKAGE_METADATA['VERSION']}-${PACKAGE_METADATA['REVISION']}"
             else
-                PACKAGE_METADATA["VERSION_FULL"]="${PACKAGE_METADATA['VERSION']}"
+                if [ "${PACKAGE_METADATA['VERSION']}" != "${PACKAGE_METADATA['VERSION']/-/}" ]; then
+                    PACKAGE_METADATA["VERSION_FULL"]="${PACKAGE_METADATA['VERSION']}-0"
+                else
+                    PACKAGE_METADATA["VERSION_FULL"]="${PACKAGE_METADATA['VERSION']}"
+                fi
             fi
         else
             echo "[!] Cannot find 'build.sh' for package '$package_name'." >&2
