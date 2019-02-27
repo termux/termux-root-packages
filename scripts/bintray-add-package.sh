@@ -43,6 +43,7 @@ BINTRAY_REPO_COMPONENT="stable"
 # variables by user.
 : "${BINTRAY_USERNAME:=""}"
 : "${BINTRAY_API_KEY:=""}"
+: "${GPG_PASSPHRASE:=""}"
 
 ###################################################################
 
@@ -211,6 +212,31 @@ upload_package() {
     echo "[@] Finished publication of package '$package_name'." >&2
 }
 
+sign_repo() {
+    echo -n "[*]   Signing repo... " >&2
+    curl_response=$(
+        curl \
+            --user "${BINTRAY_USERNAME}:${BINTRAY_API_KEY}" \
+            --request POST \
+	    --header "X-GPG-PASSPHRASE: ${GPG_PASSPHRASE}" \
+            "https://api.bintray.com/calc_metadata/${BINTRAY_USERNAME}/${BINTRAY_REPO_NAME}"
+    )
+
+    http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
+    api_response_message=$(echo "$curl_response" | cut -d'|' -f1 | jq -r .message)
+
+    case "$http_status_code" in
+        202)
+            echo "done" >&2
+            ;;
+        *)
+            echo "failure" >&2
+            echo "[!] $api_response_message" >&2
+            exit 1
+            ;;
+    esac
+}
+
 extract_variable_from_buildsh() {
     local extracted_value
     local variable_name
@@ -220,6 +246,7 @@ extract_variable_from_buildsh() {
         set -o noglob
         unset BINTRAY_USERNAME
         unset BINTRAY_API_KEY
+        unset GPG_PASSPHRASE
         [ -e "$TERMUX_PACKAGES_BASEDIR/scripts/properties.sh" ] && . "$TERMUX_PACKAGES_BASEDIR/scripts/properties.sh"
         . "$TERMUX_PACKAGES_BASEDIR/packages/$package_name/build.sh"
         echo "${!variable_name}"
@@ -283,6 +310,10 @@ process_packages() {
         else
             upload_package "$package_name"
         fi
+
+	if [ ! -z ${GPG_PASSPHRASE} ]; then
+	    sign_repo
+	fi
     done
 }
 
@@ -305,6 +336,7 @@ show_usage() {
     echo >&2
     echo "  BINTRAY_USERNAME  - User or organization name." >&2
     echo "  BINTRAY_API_KEY   - API key." >&2
+    echo "  GPG_PASSPHRASE    - Password for secret signing key at bintray." >&2
     echo >&2
 }
 

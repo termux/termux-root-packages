@@ -24,6 +24,7 @@ before_script:
   script:
     - unset BINTRAY_USERNAME
     - unset BINTRAY_API_KEY
+    - unset GPG_PASSPHRASE
     - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
     - cd ./termux-packages
     - |
