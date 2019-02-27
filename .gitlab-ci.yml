@@ -1,71 +1,68 @@
-image: xeffyr/termux-extra-packages-builder:latest
+image: termux/package-builder:latest
 
 stages:
   - build
   - deploy
 
-## Use custom install directory (/data) so we will be
-## able to cache it.
+variables:
+  GIT_SUBMODULE_STRATEGY: "recursive"
+
+## Copy packages to the build environment.
 before_script:
-  - mkdir -p ./build-data/data/com.termux/files/usr
-  - mount --bind ./build-data /data
+  - |
+    for pkg in ./packages/*; do
+        if [ ! -d "./termux-packages/packages/$(basename "$pkg")" ]; then
+            cp -a "$pkg" ./termux-packages/packages/
+        else
+            echo "[!] Package '$(basename "$pkg")' already exists in build environment. Skipping."
+        fi
+    done
 
 ## Common configuration for all build jobs.
 .job_template: &build_job
   stage: build
   script:
-    - bash ./scripts/ci/gitlab.sh $TERMUX_ARCH
+    - unset BINTRAY_USERNAME
+    - unset BINTRAY_API_KEY
+    - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
+    - cd ./termux-packages
+    - |
+      for package in $MODIFIED_PACKAGES; do
+          ./build-package.sh -q -i -a "$TERMUX_ARCH" "$package"
+      done
   retry:
     max: 2
     when:
-      - script_failure
       - runner_system_failure
       - unknown_failure
   artifacts:
     when: always
-    expire_in: 1 week
     paths:
-      - deb-packages
+      - termux-packages/debs
 
 ## Building packages for AArch64.
 build-aarch64:
   <<: *build_job
   variables:
     TERMUX_ARCH: aarch64
-  cache:
-    key: aarch64-data
-    paths:
-      - build-data
 
 ## Building packages for ARM.
 build-arm:
   <<: *build_job
   variables:
     TERMUX_ARCH: arm
-  cache:
-    key: arm-data
-    paths:
-      - build-data
 
 ## Building packages for i686.
 build-i686:
   <<: *build_job
   variables:
     TERMUX_ARCH: i686
-  cache:
-    key: i686-data
-    paths:
-      - build-data
 
 ## Building packages for x86_64.
 build-x86_64:
   <<: *build_job
   variables:
     TERMUX_ARCH: x86_64
-  cache:
-    key: x86_64-data
-    paths:
-      - build-data
 
 ## Submit build packages to repository.
 ## This should be executed Only if performing
@@ -75,7 +72,13 @@ upload-packages:
   only:
     - master@Grimler/termux-root-packages
   script:
-    - bash ./scripts/ci/gitlab.sh --upload
+    - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
+    - |
+      if [ -n "$MODIFIED_PACKAGES" ]; then
+          ./scripts/bintray-add-package.sh --path ./termux-packages/debs $MODIFIED_PACKAGES
+      else
+          exit 0
+      fi
   retry:
     max: 2
     when:
