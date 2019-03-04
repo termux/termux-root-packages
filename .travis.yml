@@ -32,5 +32,5 @@ script:
   - cd ./termux-packages
   - |
     for package in $MODIFIED_PACKAGES; do
-        ./scripts/run-docker.sh ./build-package.sh -q -i -a "$TERMUX_ARCH" "$package" || exit 1
+        ./scripts/run-docker.sh ./build-package.sh -q -a "$TERMUX_ARCH" "$package" || exit 1
     done
