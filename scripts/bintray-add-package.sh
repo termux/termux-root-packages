@@ -219,6 +219,7 @@ sign_repo() {
             --user "${BINTRAY_USERNAME}:${BINTRAY_API_KEY}" \
             --request POST \
 	    --header "X-GPG-PASSPHRASE: ${GPG_PASSPHRASE}" \
+	    --write-out "|%{http_code}" \
             "https://api.bintray.com/calc_metadata/${BINTRAY_USERNAME}/${BINTRAY_REPO_NAME}"
     )
 
