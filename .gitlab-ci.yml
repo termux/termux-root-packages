@@ -74,6 +74,7 @@ upload-packages:
     - master@Grimler/termux-root-packages
   script:
     - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
+    - sudo apt update && sudo apt install jq
     - |
       if [ -n "$MODIFIED_PACKAGES" ]; then
           ./scripts/bintray-add-package.sh --path ./termux-packages/debs $MODIFIED_PACKAGES
