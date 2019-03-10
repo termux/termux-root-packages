@@ -2,34 +2,20 @@ image: termux/package-builder:latest
 
 stages:
   - build
-  - deploy
-
-variables:
-  GIT_SUBMODULE_STRATEGY: "recursive"
-
-## Copy packages to the build environment.
-before_script:
-  - |
-    for pkg in ./packages/*; do
-        if [ ! -d "./termux-packages/packages/$(basename "$pkg")" ]; then
-            cp -a "$pkg" ./termux-packages/packages/
-        else
-            echo "[!] Package '$(basename "$pkg")' already exists in build environment. Skipping."
-        fi
-    done
 
 ## Common configuration for all build jobs.
+## Variables BINTRAY_* should be unset to
+## prevent leaking of sensitive information.
 .job_template: &build_job
   stage: build
   script:
     - unset BINTRAY_USERNAME
     - unset BINTRAY_API_KEY
-    - unset GPG_PASSPHRASE
-    - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
-    - cd ./termux-packages
+    - unset BINTRAY_GPG_SUBJECT
+    - unset BINTRAY_GPG_PASSPHRASE
     - |
-      for package in $MODIFIED_PACKAGES; do
-          ./build-package.sh -q -i -a "$TERMUX_ARCH" "$package"
+      for package in $(./scripts/determine_git_changes.sh); do
+          ./build-package.sh -q -i -a "$TERMUX_ARCH" "$package" || exit 1
       done
   retry:
     max: 2
@@ -77,7 +63,7 @@ upload-packages:
     - sudo apt update && sudo apt -y install jq
     - |
       if [ -n "$MODIFIED_PACKAGES" ]; then
-          ./scripts/bintray-add-package.sh --path ./termux-packages/debs $MODIFIED_PACKAGES
+          ./scripts/package_uploader.sh --path ./termux-packages/debs $MODIFIED_PACKAGES
       else
           exit 0
       fi
