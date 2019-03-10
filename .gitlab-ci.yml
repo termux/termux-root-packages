@@ -2,6 +2,21 @@ image: termux/package-builder:latest
 
 stages:
   - build
+  - deploy
+
+variables:
+  GIT_SUBMODULE_STRATEGY: "recursive"
+
+## Copy packages to the build environment.
+before_script:
+  - |
+    for pkg in ./packages/*; do
+        if [ ! -d "./termux-packages/packages/$(basename "$pkg")" ]; then
+            cp -a "$pkg" ./termux-packages/packages/
+        else
+            echo "[!] Package '$(basename "$pkg")' already exists in build environment. Skipping."
+        fi
+    done
 
 ## Common configuration for all build jobs.
 ## Variables BINTRAY_* should be unset to
@@ -13,9 +28,11 @@ stages:
     - unset BINTRAY_API_KEY
     - unset BINTRAY_GPG_SUBJECT
     - unset BINTRAY_GPG_PASSPHRASE
+    - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
+    - cd ./termux-packages
     - |
-      for package in $(./scripts/determine_git_changes.sh); do
-          ./build-package.sh -q -i -a "$TERMUX_ARCH" "$package" || exit 1
+      for package in $MODIFIED_PACKAGES; do
+          ./build-package.sh -q -i -a "$TERMUX_ARCH" "$package"
       done
   retry:
     max: 2
