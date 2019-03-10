@@ -32,6 +32,7 @@ declare -gA PACKAGE_METADATA
 # Initialize default configuration.
 DEBFILES_DIR_PATH="$TERMUX_PACKAGES_BASEDIR/debs"
 PACKAGE_DELETE_MODE=false
+KEEP_OLD_VERSION=false
 
 # Bintray-specific configuration.
 BINTRAY_REPO_NAME="termux-root-packages"
@@ -43,7 +44,17 @@ BINTRAY_REPO_COMPONENT="stable"
 # variables by user.
 : "${BINTRAY_USERNAME:=""}"
 : "${BINTRAY_API_KEY:=""}"
-: "${GPG_PASSPHRASE:=""}"
+: "${BINTRAY_GPG_SUBJECT:=""}"
+: "${BINTRAY_GPG_PASSPHRASE:=""}"
+
+# If BINTRAY_GPG_SUBJECT is not specified, then signing will be
+# done with gpg key of subject '$BINTRAY_USERNAME'.
+if [ -z "$BINTRAY_GPG_SUBJECT" ]; then
+    BINTRAY_GPG_SUBJECT="$BINTRAY_USERNAME"
+fi
+
+# termux-root packages are uploaded to bintray.com/grimler
+BINTRAY_SUBJECT="grimler"
 
 ###################################################################
 
@@ -85,7 +96,7 @@ delete_package() {
             --user "${BINTRAY_USERNAME}:${BINTRAY_API_KEY}" \
             --request DELETE \
             --write-out "|%{http_code}" \
-            "https://api.bintray.com/packages/${BINTRAY_USERNAME}/${BINTRAY_REPO_NAME}/${package_name}"
+            "https://api.bintray.com/packages/${BINTRAY_SUBJECT}/${BINTRAY_REPO_NAME}/${package_name}"
     )
 
     http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
@@ -141,11 +152,13 @@ upload_package() {
         exit 1
     fi
 
-    # Delete entry for package (with all related debfiles).
-    delete_package "$package_name"
+    if ! $KEEP_OLD_VERSION; then
+        # Delete entry for package (with all related debfiles).
+        delete_package "$package_name"
+    fi
 
     # Create new entry for package.
-    echo -n "[@] Creating new entry for package '$package_name'... " >&2
+    echo -n "[@] Creating entry for version '${PACKAGE_METADATA['VERSION_FULL']}' of package '$package_name'... " >&2
     curl_response=$(
         curl \
             --silent \
@@ -154,7 +167,7 @@ upload_package() {
             --header "Content-Type: application/json" \
             --data "$(json_metadata_dump)" \
             --write-out "|%{http_code}" \
-            "https://api.bintray.com/packages/${BINTRAY_USERNAME}/${BINTRAY_REPO_NAME}"
+            "https://api.bintray.com/packages/${BINTRAY_SUBJECT}/${BINTRAY_REPO_NAME}"
     )
 
     http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
@@ -165,7 +178,7 @@ upload_package() {
             echo "done" >&2
             ;;
         409)
-            echo "unchanged" >&2
+            echo "no-need" >&2
             ;;
         *)
             echo "failure" >&2
@@ -186,9 +199,11 @@ upload_package() {
                 --header "X-Bintray-Debian-Distribution: $BINTRAY_REPO_DISTRIBUTION" \
                 --header "X-Bintray-Debian-Component: $BINTRAY_REPO_COMPONENT" \
                 --header "X-Bintray-Debian-Architecture: $package_arch" \
+                --header "X-Bintray-Package: ${package_name}" \
+                --header "X-Bintray-Version: ${PACKAGE_METADATA['VERSION_FULL']}" \
                 --upload-file "$DEBFILES_DIR_PATH/$item" \
                 --write-out "|%{http_code}" \
-                "https://api.bintray.com/content/${BINTRAY_USERNAME}/${BINTRAY_REPO_NAME}/${package_name}/${PACKAGE_METADATA['VERSION_FULL']}/${package_arch}/${item};publish=1"
+                "https://api.bintray.com/content/${BINTRAY_SUBJECT}/${BINTRAY_REPO_NAME}/${package_arch}/${item}"
         )
 
         http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
@@ -209,25 +224,26 @@ upload_package() {
         esac
     done
 
-    echo "[@] Finished publication of package '$package_name'." >&2
-}
-
-sign_repo() {
-    echo -n "[*]   Signing repo... " >&2
+    # Publishing package only after uploading all it's files. This will prevent
+    # spawning multiple metadata-generation jobs and will allow to sign metadata
+    # with maintainer's key.
+    echo -n "[@] Publishing package '$package_name'... " >&2
     curl_response=$(
         curl \
+            --silent \
             --user "${BINTRAY_USERNAME}:${BINTRAY_API_KEY}" \
             --request POST \
-	    --header "X-GPG-PASSPHRASE: ${GPG_PASSPHRASE}" \
-	    --write-out "|%{http_code}" \
-            "https://api.bintray.com/calc_metadata/${BINTRAY_USERNAME}/${BINTRAY_REPO_NAME}"
+            --header "Content-Type: application/json" \
+            --data "{\"subject\":\"${BINTRAY_GPG_SUBJECT}\",\"passphrase\":\"$BINTRAY_GPG_PASSPHRASE\"}" \
+            --write-out "|%{http_code}" \
+            "https://api.bintray.com/content/${BINTRAY_SUBJECT}/${BINTRAY_REPO_NAME}/${package_name}/${PACKAGE_METADATA['VERSION_FULL']}/publish"
     )
 
     http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
     api_response_message=$(echo "$curl_response" | cut -d'|' -f1 | jq -r .message)
 
     case "$http_status_code" in
-        202)
+        200)
             echo "done" >&2
             ;;
         *)
@@ -245,9 +261,15 @@ extract_variable_from_buildsh() {
 
     extracted_value=$(
         set -o noglob
-        unset BINTRAY_USERNAME
+
+        # When sourcing external code, do not expose variables
+        # with sensitive information.
         unset BINTRAY_API_KEY
-        unset GPG_PASSPHRASE
+        unset BINTRAY_GPG_PASSPHRASE
+        unset BINTRAY_GPG_SUBJECT
+        unset BINTRAY_SUBJECT
+        unset BINTRAY_USERNAME
+
         [ -e "$TERMUX_PACKAGES_BASEDIR/scripts/properties.sh" ] && . "$TERMUX_PACKAGES_BASEDIR/scripts/properties.sh"
         . "$TERMUX_PACKAGES_BASEDIR/packages/$package_name/build.sh"
         echo "${!variable_name}"
@@ -311,39 +333,103 @@ process_packages() {
         else
             upload_package "$package_name"
         fi
-
-	if [ ! -z ${GPG_PASSPHRASE} ]; then
-	    sign_repo
-	fi
     done
+
+    # In deletion mode we need to do metadata recalculation separately
+    # to ensure that it will be signed with maintainer's key.
+    if $PACKAGE_DELETE_MODE; then
+        local curl_response
+        local http_status_code
+        local api_response_message
+
+        echo -n "[@] Requesting metadata recalculation... " >&2
+        curl_response=$(
+            curl \
+                --silent \
+                --user "${BINTRAY_USERNAME}:${BINTRAY_API_KEY}" \
+                --request POST \
+                --header "Content-Type: application/json" \
+                --data "{\"subject\":\"${BINTRAY_GPG_SUBJECT}\",\"passphrase\":\"$BINTRAY_GPG_PASSPHRASE\"}" \
+                --write-out "|%{http_code}" \
+                "https://api.bintray.com/calc_metadata/${BINTRAY_SUBJECT}/${BINTRAY_REPO_NAME}/"
+        )
+
+        http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
+        api_response_message=$(echo "$curl_response" | cut -d'|' -f1 | jq -r .message)
+
+        case "$http_status_code" in
+            202)
+                echo "done" >&2
+                ;;
+            *)
+                echo "failure" >&2
+                echo "[!] $api_response_message" >&2
+                ;;
+        esac
+    fi
 }
 
 show_usage() {
-    echo >&2
-    echo "Usage: bintray-add-package.sh [OPTIONS] [package name] ..." >&2
-    echo >&2
-    echo "Package uploader script for Bintray." >&2
-    echo >&2
-    echo "Options:" >&2
-    echo >&2
-    echo "  -d, --delete       Delete package instead of uploading." >&2
-    echo >&2
-    echo "  -h, --help         Print this help." >&2
-    echo >&2
-    echo "  -p, --path [path]  Override path to directory with" >&2
-    echo "                     the *.deb files." >&2
-    echo >&2
-    echo "Credentials are specified via environment variables:" >&2
-    echo >&2
-    echo "  BINTRAY_USERNAME  - User or organization name." >&2
-    echo "  BINTRAY_API_KEY   - API key." >&2
-    echo "  GPG_PASSPHRASE    - Password for secret signing key at bintray." >&2
-    echo >&2
+    {
+        echo
+        echo "Usage: package_uploader.sh [OPTIONS] [package name] ..."
+        echo
+        echo "A command line client for Bintray designed for managing"
+        echo "Termux *.deb packages."
+        echo
+        echo "=========================================================="
+        echo
+        echo "Primarily indended to be used by Gitlab CI for automatic"
+        echo "package uploads but it can be used for manual uploads too."
+        echo
+        echo "By default, this script will create a new version entries"
+        echo "for specified packages and upload *.deb files for each of"
+        echo "created entries."
+        echo
+        echo "Note that if version entry already exists, it will be"
+        echo "deleted with all associated *.deb files to prevent file"
+        echo "name collisions and wasting of available space."
+        echo
+        echo "If such behaviour is unwanted, use option '-k' which will"
+        echo "not touch available versions."
+        echo
+        echo "Before using this script, check that you have all"
+        echo "necessary credentials for accessing repository."
+        echo
+        echo "Credentials are specified via environment variables:"
+        echo
+        echo "  BINTRAY_USERNAME        - User name."
+        echo "  BINTRAY_API_KEY         - User's API key."
+        echo "  BINTRAY_GPG_SUBJECT     - Owner of GPG key."
+        echo "  BINTRAY_GPG_PASSPHRASE  - GPG key passphrase."
+        echo
+        echo "=========================================================="
+        echo
+        echo "Options:"
+        echo
+        echo "  -d, --delete       Completely delete the selected"
+        echo "                     packages from the repository instead"
+        echo "                     of uploading."
+        echo
+        echo "  -h, --help         Print this help."
+        echo
+        echo "  -k, --keep-old     Prevent deletion of previous versions"
+        echo "                     when submitting package. Useful when"
+        echo "                     doing uploads within same package"
+        echo "                     versions or just to make downgrading"
+        echo "                     possible."
+        echo
+        echo "  -p, --path [path]  Specify a directory containing *.deb"
+        echo "                     files ready for uploading."
+        echo "                     Default is './debs'."
+        echo
+        echo "=========================================================="
+    } >&2
 }
 
 ###################################################################
 
-while getopts ":-:hdp:" opt; do
+while getopts ":-:hdkp:" opt; do
     case "$opt" in
         -)
             case "$OPTARG" in
@@ -370,6 +456,9 @@ while getopts ":-:hdp:" opt; do
                         exit 1
                     fi
                     ;;
+                keep-old)
+                    KEEP_OLD_VERSION=true
+                    ;;
                 *)
                     echo "[!] Invalid option '$OPTARG'." >&2
                     show_usage
@@ -383,6 +472,9 @@ while getopts ":-:hdp:" opt; do
         h)
             show_usage
             exit 0
+            ;;
+        k)
+            KEEP_OLD_VERSION=true
             ;;
         p)
             DEBFILES_DIR_PATH="${OPTARG}"
@@ -414,6 +506,10 @@ if [ $# -gt 0 ]; then
     fi
     if [ -z "$BINTRAY_API_KEY" ]; then
         echo "[!] Variable 'BINTRAY_API_KEY' is not set." >&2
+        exit 1
+    fi
+    if [ -z "$BINTRAY_GPG_SUBJECT" ]; then
+        echo "[!] Variable 'BINTRAY_GPG_SUBJECT' is not set." >&2
         exit 1
     fi
 
