@@ -451,7 +451,7 @@ while getopts ":-:hdkp:" opt; do
                     fi
 
                     if [ ! -d "$DEBFILES_DIR_PATH" ]; then
-                        echo "[!] Directory '$DEBFILES_DIR_PATH' is not exist." >&2
+                        echo "[!] Directory '$DEBFILES_DIR_PATH' does not exist." >&2
                         show_usage
                         exit 1
                     fi
@@ -479,7 +479,7 @@ while getopts ":-:hdkp:" opt; do
         p)
             DEBFILES_DIR_PATH="${OPTARG}"
             if [ ! -d "$DEBFILES_DIR_PATH" ]; then
-                echo "[!] Directory '$DEBFILES_DIR_PATH' is not exist." >&2
+                echo "[!] Directory '$DEBFILES_DIR_PATH' does not exist." >&2
                 show_usage
                 exit 1
             fi
