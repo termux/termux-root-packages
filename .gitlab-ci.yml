@@ -75,7 +75,7 @@ build-x86_64:
 upload-packages:
   stage: deploy
   only:
-    - master@Grimler/termux-root-packages
+    - android-5@Grimler/termux-root-packages
   script:
     - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
     - |

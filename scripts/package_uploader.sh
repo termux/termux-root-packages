@@ -35,7 +35,7 @@ PACKAGE_DELETE_MODE=false
 KEEP_OLD_VERSION=false
 
 # Bintray-specific configuration.
-BINTRAY_REPO_NAME="termux-root-packages"
+BINTRAY_REPO_NAME="termux-root-packages-21"
 BINTRAY_REPO_GITHUB="termux/termux-root-packages"
 BINTRAY_REPO_DISTRIBUTION="root"
 BINTRAY_REPO_COMPONENT="stable"
