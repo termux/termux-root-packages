@@ -20,17 +20,13 @@ env:
     - TERMUX_ARCH=i686
     - TERMUX_ARCH=x86_64
 
-## Copy our packages to the build environment.
-before_script:
-  - cp -a ./packages/* ./termux-packages/packages/
-
 ## Build modified packages.
 script:
   - unset BINTRAY_USERNAME
   - unset BINTRAY_API_KEY
-  - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
-  - cd ./termux-packages
+  - unset BINTRAY_GPG_SUBJECT
+  - unset BINTRAY_GPG_PASSPHRASE
   - |
-    for package in $MODIFIED_PACKAGES; do
-        ./scripts/run-docker.sh ./build-package.sh -q -a "$TERMUX_ARCH" "$package" || exit 1
+    for package in $(./scripts/get-modified-packages.sh); do
+        ./start-builder.sh ./build-package.sh -q -a "$TERMUX_ARCH" "$package" || exit 1
     done

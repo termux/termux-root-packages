@@ -10,12 +10,13 @@ variables:
 ## Copy packages to the build environment.
 before_script:
   - |
+    echo "[*] Copying packages from './packages' to build environment..."
     for pkg in ./packages/*; do
-        if [ ! -d "./termux-packages/packages/$(basename "$pkg")" ]; then
-            cp -a "$pkg" ./termux-packages/packages/
-        else
-            echo "[!] Package '$(basename "$pkg")' already exists in build environment. Skipping."
+        if [ -d "./termux-packages/packages/$(basename "$pkg")" ]; then
+            echo "[*] Replacing existing $pkg in termux-packages..."
+            rm -rf ./termux-packages/packages/$(basename "$pkg")
         fi
+        cp -a "$pkg" ./termux-packages/packages/
     done
 
 ## Common configuration for all build jobs.
@@ -77,7 +78,6 @@ upload-packages:
     - master@Grimler/termux-root-packages
   script:
     - MODIFIED_PACKAGES=$(./scripts/get-modified-packages.sh)
-    - sudo apt update && sudo apt -y install jq
     - |
       if [ -n "$MODIFIED_PACKAGES" ]; then
           ./scripts/package_uploader.sh --path ./termux-packages/debs $MODIFIED_PACKAGES
