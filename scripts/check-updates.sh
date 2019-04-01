@@ -49,6 +49,8 @@ translate_package_name() {
 		chroot) translated_name="coreutils";;
 		tshark) translated_name="wireshark";;
 		libdevmapper) translated_name="lvm2";;
+		libccid) translated_name="ccid";;
+		libpcsclite) translated_name="pcsc-lite";;
 
 		*) translated_name="$1";;
 	esac
