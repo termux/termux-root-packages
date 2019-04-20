@@ -1,4 +1,9 @@
 # Termux root packages
+
+[![Powered by JFrog Bintray](./.github/static/powered-by-bintray.png)](https://bintray.com)
+
+[![pipeline status](https://gitlab.com/grimler/termux-root-packages/badges/android-5/pipeline.svg)](https://gitlab.com/grimler/termux-root-packages/commits/android-5)
+
 This repository contains packages that are only useful for rooted users.
 
 # Building a package
