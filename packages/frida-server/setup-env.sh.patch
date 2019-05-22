@@ -1,5 +1,5 @@
---- ./releng/setup-env.sh.orig	2019-05-19 08:35:29.686650174 +0200
-+++ ./releng/setup-env.sh	2019-05-19 08:41:29.746647583 +0200
+--- ../setup-env.sh.orig	2019-05-22 08:37:29.759969941 +0200
++++ ./releng/setup-env.sh	2019-05-22 08:36:16.229970487 +0200
 @@ -97,8 +97,8 @@
  fi
  
@@ -11,33 +11,21 @@
    if [ -n "$ANDROID_NDK_ROOT" ]; then
      if [ -f "$ANDROID_NDK_ROOT/source.properties" ]; then
        ndk_installed_version=$(grep Pkg.Revision "$ANDROID_NDK_ROOT/source.properties" | awk '{ print $NF; }')
-@@ -465,25 +465,25 @@
+@@ -465,7 +465,7 @@
  
      case $host_arch in
        x86)
 -        android_api=18
-+        android_api=24
++        android_api=21
          host_triplet="i686-linux-android"
          host_arch_flags="-march=i686"
          host_ldflags="-fuse-ld=gold"
-         ;;
-       x86_64)
--        android_api=21
-+        android_api=24
-         host_triplet="x86_64-linux-android"
-         host_arch_flags=""
+@@ -477,7 +477,7 @@
          host_ldflags="-fuse-ld=gold -Wl,--icf=all"
          ;;
        arm)
 -        android_api=18
-+        android_api=24
++        android_api=21
          host_triplet="arm-linux-androideabi"
          host_arch_flags="-march=armv7-a -mfloat-abi=softfp -mfpu=vfpv3-d16"
          host_ldflags="-fuse-ld=gold -Wl,--icf=all -Wl,--fix-cortex-a8"
-         ;;
-       arm64)
--        android_api=21
-+        android_api=24
-         host_triplet="aarch64-linux-android"
-         host_arch_flags=""
-         host_ldflags="-fuse-ld=gold -Wl,--icf=all"
