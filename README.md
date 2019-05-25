@@ -2,8 +2,6 @@
 
 [![Powered by JFrog Bintray](./.github/static/powered-by-bintray.png)](https://bintray.com)
 
-[![pipeline status](https://gitlab.com/grimler/termux-root-packages/badges/master/pipeline.svg)](https://gitlab.com/grimler/termux-root-packages/commits/master)
-
 This repository contains packages that are only useful for rooted users.
 
 # Building a package
