@@ -75,8 +75,8 @@ publish_task:
     - build
 
   environment:
-    BINTRAY_USERNAME: ENCRYPTED[]
-    BINTRAY_API_KEY: ENCRYPTED[]
+    BINTRAY_USERNAME: ENCRYPTED[4f7278414220b7ea7d8e06e94edfebcf81e4bd766201201caa895a376571e50a324e6be3f3dc1aef0aec938a47f72dab]
+    BINTRAY_API_KEY: ENCRYPTED[a60797f4f21f143f4a1ef45b9d4286fa56c3ddbc1d652d988bfd5cc864790befc614e25783379b3f76121f5141b3e29a]
 
   upload_to_bintray_script: |
     if grep -qiP '^\s*%ci:reset-backlog\s*$' <(git log --format="%B" -n 1 "$CIRRUS_CHANGE_IN_REPO"); then
