@@ -2,6 +2,8 @@
 
 [![Powered by JFrog Bintray](./.github/static/powered-by-bintray.png)](https://bintray.com)
 
+[![pipeline status](https://api.cirrus-ci.com/github/termux/termux-root-packages.svg)](https://api.cirrus-ci.com/github/termux/termux-root-packages.svg)
+
 This repository contains packages that are only useful for rooted users.
 
 # Building a package
