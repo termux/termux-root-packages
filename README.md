@@ -2,7 +2,7 @@
 
 [![Powered by JFrog Bintray](./.github/static/powered-by-bintray.png)](https://bintray.com)
 
-[![pipeline status](https://gitlab.com/grimler/termux-root-packages/badges/android-5/pipeline.svg)](https://gitlab.com/grimler/termux-root-packages/commits/android-5)
+[![pipeline status](https://api.cirrus-ci.com/github/termux/termux-root-packages.svg?branch=android-5)](https://api.cirrus-ci.com/github/termux/termux-root-packages.svg?branch=android-5)
 
 This repository contains packages that are only useful for rooted users.
 
