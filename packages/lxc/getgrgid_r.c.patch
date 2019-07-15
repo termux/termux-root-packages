@@ -1,0 +1,11 @@
+--- ../getgrgid_r.c.orig	2019-07-15 19:25:19.262918552 +0200
++++ ./src/include/getgrgid_r.c	2019-07-15 19:26:06.769913034 +0200
+@@ -477,8 +477,3 @@
+ 		errno = rv;
+ 	return rv;
+ }
+-
+-int getgrgid_r(gid_t gid, struct group *gr, char *buf, size_t size, struct group **res)
+-{
+-	return getgr_r(0, gid, gr, buf, size, res);
+-}
