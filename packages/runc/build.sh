@@ -7,6 +7,7 @@ TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://github.com/opencontainers/runc/archive/v${TERMUX_PKG_VERSION}.tar.gz
 TERMUX_PKG_SHA256=efe4ff9bbe49b19074346d65c914d809c0a3e90d062ea9619fe240f931f0b700
 TERMUX_PKG_DEPENDS="libseccomp"
+TERMUX_PKG_API_LEVEL=23
 
 termux_step_make() {
     termux_setup_golang
