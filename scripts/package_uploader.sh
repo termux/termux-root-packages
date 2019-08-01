@@ -142,7 +142,7 @@ emergency_exit() {
 json_metadata_dump() {
 	local old_ifs=$IFS
 	local license
-	local pkg_licenses
+	local pkg_licenses=""
 
 	IFS=","
 	for license in ${PACKAGE_METADATA['LICENSES']}; do
@@ -349,9 +349,9 @@ upload_package() {
 			debfiles_catalog["${1}_${PACKAGE_METADATA['VERSION_FULL']}_${arch}.deb"]=${arch}
 		fi
 
-		# Development package.
-		if [ -f "$DEBFILES_DIR_PATH/${1}-dev_${PACKAGE_METADATA['VERSION_FULL']}_${arch}.deb" ]; then
-			debfiles_catalog["${1}-dev_${PACKAGE_METADATA['VERSION_FULL']}_${arch}.deb"]=${arch}
+		# Static library package.
+		if [ -f "$DEBFILES_DIR_PATH/${1}-static_${PACKAGE_METADATA['VERSION_FULL']}_${arch}.deb" ]; then
+			debfiles_catalog["${1}-static_${PACKAGE_METADATA['VERSION_FULL']}_${arch}.deb"]=${arch}
 		fi
 
 		# Discover subpackages.
@@ -550,10 +550,8 @@ process_packages() {
 				msg "    * ${package_name}: skipping because field 'TERMUX_PKG_LICENSE' is empty."
 				SCRIPT_ERROR_EXIT=true
 				continue
-			elif grep -qP '.*custom.*' <(echo "${PACKAGE_METADATA['LICENSES']}"); then
-				msg "    * ${package_name}: skipping because it has custom license."
-				SCRIPT_ERROR_EXIT=true
-				continue
+			elif grep -qP '.*(custom|non-free).*' <(echo "${PACKAGE_METADATA['LICENSES']}"); then
+				PACKAGE_METADATA["LICENSES"]=""
 			fi
 
 			PACKAGE_METADATA["DESCRIPTION"]=$(get_package_property "$package_name" "TERMUX_PKG_DESCRIPTION")
