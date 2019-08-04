@@ -51,4 +51,4 @@ task:
     BINTRAY_GPG_PASSPHRASE: ENCRYPTED[!1359cb14fc48ecba379001f06db6d1452a929b64d970345b84cc12b97a0f17a3be5adc34d56125a647470df7487dfec0!]
 
   upload_script: |
-    bash ./scripts/build/ci/cirrus-ci_dispatcher.sh --upload
+    bash ./scripts/cirrus-ci_dispatcher.sh --upload
