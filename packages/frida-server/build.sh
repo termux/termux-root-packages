@@ -24,7 +24,7 @@ termux_step_extract_package() {
 			$TERMUX_PKG_SRCURL \
 			$TMP_CHECKOUT
 		cd $TMP_CHECKOUT
-		git submodule update --init # --depth 1
+		git submodule update --init
 		mv $TMP_CHECKOUT $CHECKED_OUT_FOLDER
 	fi
 
