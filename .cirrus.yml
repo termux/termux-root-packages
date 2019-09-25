@@ -3,21 +3,42 @@ container:
   cpu: 4
   memory: 8
 
+##
+##  Perform basic check for errors in build.sh package scripts.
+##  If error found, exit with error code to stop build.
+##
 task:
-  name: Build
+  name: Lint packages
+
+  timeout_in: 5m
+
+  script: |
+    bash scripts/lint-packages.sh
+
+##
+##  Determine changes in the last push, find modified packages and
+##  build them for aarch64/arm/i686/x86_64 architectures.
+##
+##  Built packages are accessible from Cirrus CI web interface.
+##
+task:
+  name: Build packages
 
   # 2 hours is a maximal timeout available for free use.
   timeout_in: 120m
 
+  depends_on:
+    - Lint packages
+
   environment:
     TERMUX_MAKE_PROCESSES: 4
     matrix:
-      TERMUX_ARCH: aarch64
-      TERMUX_ARCH: arm
-      TERMUX_ARCH: i686
-      TERMUX_ARCH: x86_64
+      - TERMUX_ARCH: aarch64
+      - TERMUX_ARCH: arm
+      - TERMUX_ARCH: i686
+      - TERMUX_ARCH: x86_64
 
-  # Do not use built-in git client provided by Cirrus as may
+  # Do not use built-in git client provided by Cirrus as it may
   # cause problems when determining changed files.
   clone_script: |
     if [[ -z "$CIRRUS_PR" ]]; then
@@ -30,25 +51,75 @@ task:
     fi
 
   build_script: |
+    export TERMUX_DEBDIR="/tmp/debs-${TERMUX_ARCH}"
+    ln -s "$TERMUX_DEBDIR" debs
     bash ./scripts/cirrus-ci_dispatcher.sh
+
+  aarch64_debs_cache:
+    folder: "/tmp/debs-aarch64"
+    fingerprint_script: echo "${CIRRUS_CHANGE_IN_REPO}-aarch64"
+
+  arm_debs_cache:
+    folder: "/tmp/debs-arm"
+    fingerprint_script: echo "${CIRRUS_CHANGE_IN_REPO}-arm"
+
+  i686_debs_cache:
+    folder: "/tmp/debs-i686"
+    fingerprint_script: echo "${CIRRUS_CHANGE_IN_REPO}-i686"
+
+  x86-64_debs_cache:
+    folder: "/tmp/debs-x86_64"
+    fingerprint_script: echo "${CIRRUS_CHANGE_IN_REPO}-x86_64"
 
   output_artifacts:
     path: "./termux-packages/debs/*.deb"
 
+##
+##  When doing release build (branch 'master'), upload built packages
+##  to APT repository on Bintray.
+##
 task:
-  name: Publish
+  name: Upload packages to Bintray
 
   only_if: $CIRRUS_BRANCH == 'master'
 
   timeout_in: 60m
 
   depends_on:
-    - Build
+    - Build packages
 
   environment:
     BINTRAY_USERNAME: ENCRYPTED[!4f7278414220b7ea7d8e06e94edfebcf81e4bd766201201caa895a376571e50a324e6be3f3dc1aef0aec938a47f72dab!]
     BINTRAY_API_KEY: ENCRYPTED[!a60797f4f21f143f4a1ef45b9d4286fa56c3ddbc1d652d988bfd5cc864790befc614e25783379b3f76121f5141b3e29a!]
     BINTRAY_GPG_PASSPHRASE: ENCRYPTED[!1359cb14fc48ecba379001f06db6d1452a929b64d970345b84cc12b97a0f17a3be5adc34d56125a647470df7487dfec0!]
 
-  upload_script: |
+  # Do not use built-in git client provided by Cirrus as it may
+  # cause problems when determining changed files.
+  clone_script: |
+    if [[ -z "$CIRRUS_PR" ]]; then
+      git clone --recursive --branch="$CIRRUS_BRANCH" "https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git" "$CIRRUS_WORKING_DIR"
+      git reset --hard "$CIRRUS_CHANGE_IN_REPO"
+    else
+      git clone --recursive "https://x-access-token:${CIRRUS_REPO_CLONE_TOKEN}@github.com/${CIRRUS_REPO_FULL_NAME}.git" "$CIRRUS_WORKING_DIR"
+      git fetch origin "pull/$CIRRUS_PR/head:pull/$CIRRUS_PR"
+      git reset --hard "$CIRRUS_CHANGE_IN_REPO"
+    fi
+
+  aarch64_debs_cache:
+    folder: "./debs"
+    fingerprint_script: echo "${CIRRUS_CHANGE_IN_REPO}-aarch64"
+
+  arm_debs_cache:
+    folder: "./debs"
+    fingerprint_script: echo "${CIRRUS_CHANGE_IN_REPO}-arm"
+
+  i686_debs_cache:
+    folder: "./debs"
+    fingerprint_script: echo "${CIRRUS_CHANGE_IN_REPO}-i686"
+
+  x86-64_debs_cache:
+    folder: "./debs"
+    fingerprint_script: echo "${CIRRUS_CHANGE_IN_REPO}-x86_64"
+
+  script: |
     bash ./scripts/cirrus-ci_dispatcher.sh --upload
