@@ -52,7 +52,6 @@ task:
 
   build_script: |
     export TERMUX_DEBDIR="/tmp/debs-${TERMUX_ARCH}"
-    ln -s "$TERMUX_DEBDIR" debs
     bash ./scripts/cirrus-ci_dispatcher.sh
 
   aarch64_debs_cache:
