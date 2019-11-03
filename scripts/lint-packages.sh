@@ -237,8 +237,7 @@ lint_package() {
 					pkg_lint_error=true
 				fi
 			else
-				echo "NOT SET"
-				pkg_lint_error=true
+				echo "NOT SET (acceptable)"
 			fi
 		else
 			if [ "$TERMUX_PKG_SKIP_SRC_EXTRACT" != "true" ] && ! declare -F termux_step_extract_package > /dev/null 2>&1; then
