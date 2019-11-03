@@ -85,7 +85,7 @@ lint_package() {
 
 		# Certain fields may be API-specific.
 		# Using API 24 here.
-		TERMUX_PKG_API_LEVEL=24
+		TERMUX_PKG_API_LEVEL=21
 
 		if [ -f "$REPO_DIR/scripts/properties.sh" ]; then
 			. "$REPO_DIR/scripts/properties.sh"
