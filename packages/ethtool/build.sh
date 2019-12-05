@@ -3,6 +3,7 @@ TERMUX_PKG_DESCRIPTION="standard Linux utility for controlling network drivers a
 TERMUX_PKG_LICENSE="Apache-2.0"
 TERMUX_PKG_MAINTAINER="Auxilus @Auxilus"
 TERMUX_PKG_VERSION=5.3
+TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://mirrors.edge.kernel.org/pub/software/network/ethtool/ethtool-${TERMUX_PKG_VERSION}.tar.xz
 TERMUX_PKG_SHA256=f3dac0dbce7066af05fbe92812cc33a042d03fb00a45bcf9959f20455efe24c4
 TERMUX_PKG_DEPENDS="libnl"

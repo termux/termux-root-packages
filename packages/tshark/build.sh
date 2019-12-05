@@ -3,6 +3,7 @@ TERMUX_PKG_DESCRIPTION="Network protocol analyzer and sniffer"
 TERMUX_PKG_LICENSE="GPL-2.0"
 TERMUX_PKG_MAINTAINER="Auxilus @Auxilus"
 TERMUX_PKG_VERSION=3.0.6
+TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://www.wireshark.org/download/src/all-versions/wireshark-${TERMUX_PKG_VERSION}.tar.xz
 TERMUX_PKG_SHA256=a87f4022a0c15ddbf1730bf1acafce9e75a4e657ce9fa494ceda0324c0c3e33e
 TERMUX_PKG_DEPENDS="glib, libgpg-error, libgcrypt, libnl, libpcap, libgnutls, openssl, libiconv, libcap"

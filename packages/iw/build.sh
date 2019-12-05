@@ -3,6 +3,7 @@ TERMUX_PKG_DESCRIPTION="CLI configuration utility for wireless devices"
 TERMUX_PKG_LICENSE="ISC"
 TERMUX_PKG_MAINTAINER="Auxilus @Auxilus"
 TERMUX_PKG_VERSION=5.3
+TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://mirrors.edge.kernel.org/pub/software/network/iw/iw-${TERMUX_PKG_VERSION}.tar.xz
 TERMUX_PKG_SHA256=04afe857bc8dea67e461946de30ae1b012954b6965839c5c3fda7d0ed15505d5
 TERMUX_PKG_DEPENDS="libnl"

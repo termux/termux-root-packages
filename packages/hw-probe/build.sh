@@ -2,6 +2,7 @@ TERMUX_PKG_HOMEPAGE=https://github.com/linuxhw/hw-probe
 TERMUX_PKG_DESCRIPTION="Tool to probe for hardware and check its operability"
 TERMUX_PKG_LICENSE="GPL-2.0"
 TERMUX_PKG_VERSION=1.4
+TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://github.com/linuxhw/hw-probe/archive/$TERMUX_PKG_VERSION.tar.gz
 TERMUX_PKG_SHA256=90f3ea83bf641348b209e4a2a910f65d836ae7828c0be0f660236ea413bc46bb
 TERMUX_PKG_DEPENDS="curl, hwinfo, net-tools, perl"

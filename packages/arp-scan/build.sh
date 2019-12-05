@@ -2,6 +2,7 @@ TERMUX_PKG_HOMEPAGE=https://github.com/royhills/arp-scan
 TERMUX_PKG_DESCRIPTION="arp-scan is a command-line tool for system discovery and fingerprinting. It constructs and sends ARP requests to the specified IP addresses, and displays any responses that are received."
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_VERSION=1.9.6
+TERMUX_PKG_REVISION=1
 TERMUX_PKG_SRCURL=https://github.com/royhills/arp-scan/archive/${TERMUX_PKG_VERSION}.tar.gz
 TERMUX_PKG_SHA256=971b45c3369816467994797fbcd0076eb8f0ffb9c42764ea6dba25ab3fd490da
 TERMUX_PKG_DEPENDS="libpcap"
