@@ -7,6 +7,8 @@ TERMUX_PKG_SHA256=669bba0e8dd7df54ade6321a5c7d2ec20563ffd777f7b3b0394a11f88da646
 TERMUX_PKG_SRCURL=https://github.com/gcla/termshark/archive/v${TERMUX_PKG_VERSION}.tar.gz
 
 TERMUX_PKG_DEPENDS="tshark"
+# Undefined reference to stderr
+TERMUX_PKG_BLACKLISTED_ARCHES="x86_64"
 
 termux_step_make() {
 	termux_setup_golang
