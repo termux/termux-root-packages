@@ -6,7 +6,12 @@
 
 This repository contains packages that are only useful for rooted users.
 
+# Contributing
+
+Information on how to open pull requests to help keep the packages here up to date can be read in [CONTRIBUTING.md](CONTRIBUTING.md)
+
 # Building a package
+
 To build a package, first clone termux-root-packages,
 ```sh
 git clone https://github.com/termux/termux-root-packages
@@ -29,6 +34,7 @@ To build from the docker container, termux-root-packages has to be a subfolder o
 The termux-package submodule is not needed for this.
 
 # Subscribing to the repository
+
 To install packages from this repository, you need to subscribe to it with:
 ```sh
 pkg install root-repo
