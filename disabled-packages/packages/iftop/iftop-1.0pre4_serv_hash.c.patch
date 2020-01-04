@@ -1,0 +1,17 @@
+diff -uNr iftop-1.0pre4/serv_hash.c iftop-1.0pre4.mod/serv_hash.c
+--- iftop-1.0pre4/serv_hash.c	2005-10-26 23:27:09.000000000 +0300
++++ iftop-1.0pre4.mod/serv_hash.c	2020-01-04 17:01:20.465409482 +0200
+@@ -52,7 +52,6 @@
+   struct servent* ent;
+   struct protoent* pent;
+   ip_service* service;
+-  setprotoent(1);
+   while((ent = getservent()) != NULL) {
+     pent = getprotobyname(ent->s_proto);
+     if(pent != NULL) {
+@@ -62,5 +61,4 @@
+       hash_insert(sh, service, xstrdup(ent->s_name));
+     }
+   }
+-  endprotoent();
+ }
