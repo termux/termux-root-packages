@@ -24,7 +24,7 @@ git submodule update
 ```
 You can then build a package with the following:
 ```sh
-./build-root-package.sh name-of-package
+./build-package.sh name-of-package
 ```
 Note that this currently only works outside of the docker container.
 To build from the docker container, termux-root-packages has to be a subfolder of termux-packages, and a root package can then be built with
