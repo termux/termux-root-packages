@@ -8,3 +8,7 @@ TERMUX_PKG_DEPENDS="libnl, openssl, libpcap, pciutils"
 # clang can't handle ternary instrutions on aarch64:
 # https://github.com/aircrack-ng/aircrack-ng/issues/1957
 TERMUX_PKG_BLACKLISTED_ARCHES="aarch64"
+
+termux_step_pre_configure() {
+	NOCONFIGURE=1 ./autogen.sh
+}
