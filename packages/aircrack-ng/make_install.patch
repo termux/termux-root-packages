@@ -1,0 +1,32 @@
+commit b3b20b18ad3812fa4ec7d498e43ce34cf5e4a7d8
+Author: Henrik Grimler <henrik@grimler.se>
+Date:   Mon Mar 2 12:04:07 2020 +0100
+
+    aircrack: install to bin instead of sbin
+
+diff --git a/src/Makefile.inc b/src/Makefile.inc
+index ab5a4a20..54c2ea0d 100644
+--- a/src/Makefile.inc
++++ b/src/Makefile.inc
+@@ -80,7 +80,7 @@ endif
+ 
+ bin_PROGRAMS += wpaclean
+ 
+-sbin_PROGRAMS += airbase-ng \
++bin_PROGRAMS += airbase-ng \
+                  aireplay-ng \
+                  airodump-ng \
+                  airserv-ng \
+@@ -93,10 +93,10 @@ endif
+ if EXPERIMENTAL
+ bin_PROGRAMS += buddy-ng
+ 
+-sbin_PROGRAMS += airventriloquist-ng
++bin_PROGRAMS += airventriloquist-ng
+ 
+ if HAVE_AIRPCAP_OR_PCAP
+-sbin_PROGRAMS += besside-ng \
++bin_PROGRAMS += besside-ng \
+                  easside-ng \
+                  tkiptun-ng \
+                  wesside-ng
