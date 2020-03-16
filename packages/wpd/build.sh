@@ -31,3 +31,4 @@ termux_step_extract_package() {
 termux_step_make_install() {
 	cp wpd $TERMUX_PREFIX/bin/wpd
 	chmod +x $TERMUX_PREFIX/bin/wpd
+}
