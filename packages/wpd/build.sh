@@ -2,7 +2,7 @@ TERMUX_PKG_HOMEPAGE=https://github.com/kbeflo/wpd
 TERMUX_PKG_DESCRIPTION="Shows all WiFi networks and passwords stored on your phone for Android Oreo+ (Root)"
 TERMUX_PKG_LICENSE="GPL-3.0"
 TERMUX_PKG_MAINTAINER="Kleo Bercero @kbeflo"
-TERMUX_PKG_VERSION=1.2.0
+TERMUX_PKG_VERSION=1.3.1
 TERMUX_PKG_BUILD_IN_SRC=true
 TERMUX_PKG_PLATFORM_INDEPENDENT=true
 
