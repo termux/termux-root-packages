@@ -3,7 +3,8 @@
 A simple way to help out is to check if new versions of packages have been released, and then open a pull request to update it.
 The following instructions can be run both from a GNU/Linux computer and from termux.
 
-The script `./scripts/check-updates.sh` can be used to check if any packages have received new releases.
+[Repology](https://repology.org/projects/?inrepo=termux&outdated=1)
+can be used to check for outdated packages in all termux repositories.
 
 Starting from scratch you need to:
 
