@@ -2,7 +2,7 @@
 
 [![Powered by JFrog Bintray](./.github/static/powered-by-bintray.png)](https://bintray.com)
 
-[![pipeline status](https://api.cirrus-ci.com/github/termux/termux-root-packages.svg)](https://api.cirrus-ci.com/github/termux/termux-root-packages.svg)
+[![Last build status](https://github.com/termux/termux-root-packages/workflows/Packages/badge.svg)](https://github.com/termux/termux-root-packages/actions)
 
 This repository contains packages that are only useful for rooted users.
 
@@ -12,30 +12,28 @@ Information on how to open pull requests to help keep the packages here up to da
 
 # Building a package
 
-To build a package, first clone termux-root-packages,
+To build a package, first clone termux-root-packages and cd into the new directory
 ```sh
 git clone https://github.com/termux/termux-root-packages
-```
-and then update the termux-packages submodule.
-```sh
 cd termux-root-packages
-git submodule init
-git submodule update
 ```
-You can then build a package with the following:
+
+If you want to build a package with the docker container run
 ```sh
-./build-package.sh name-of-package
+./start-builder.sh ./build-package.sh name-of-package
 ```
-Note that this currently only works outside of the docker container.
-To build from the docker container, termux-root-packages has to be a subfolder of termux-packages, and a root package can then be built with
+You might have to run the command as root, if you have not configured docker to be run as your user.
+
+To build outside the docker container you can run
 ```sh
-./build-package.sh termux-root-packages/packages/package-to-build
+git submodule update --init
+./termux-packages/build-package.sh ../packages/package-to-build)
 ```
-The termux-package submodule is not needed for this.
+`../` is needed since termux-packages/build-package.sh expects the path given (packages/package-to-build) to be relative to the position to the build-package.sh script.
 
 # Subscribing to the repository
 
-To install packages from this repository, you need to subscribe to it with:
+To install packages from this repository, you first need to subscribe to it with:
 ```sh
 pkg install root-repo
 ```

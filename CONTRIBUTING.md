@@ -3,7 +3,7 @@
 A simple way to help out is to check if new versions of packages have been released, and then open a pull request to update it.
 The following instructions can be run both from a GNU/Linux computer and from termux.
 
-The script `./scripts/check-updates.sh` can be used to check if any packages have received new releases.
+[Repology](https://repology.org/projects/?inrepo=termux&outdated=1) can be used to check for outdated packages in all termux repositories.
 
 Starting from scratch you need to:
 
@@ -72,7 +72,8 @@ sha256sum 1.0.6.tar.gz
 ```
 
 Major updates (going from for example v1.0.5 to v2.0.0) can mean that patches needs to be updated, or added.
-The CI build of the pull request will fail if patches need to be updated, but only way to discover that new patches are needed is by testing the built package in termux.
+The CI build of the pull request will fail if patches need to be updated and in some cases if a new patch is needed, but then only way to be sure that a package still works after an update is by testing the built package in termux.
+For example, many of the patches we have fixes paths to use $PREFIX, by changing for example `/tmp` to `/data/data/com.termux/files/usr/tmp`. The build will succeed even without this type of patch, but running the program later will give a `Permission denied` error or similar.
 
 ## Commiting changes and pushing to your fork
 
