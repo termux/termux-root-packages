@@ -27,7 +27,7 @@ Now that you have your own fork you can clone it to your termux device or comput
 From a suitable location simply run
 
 ```sh
-git clone https://github.com/<your-username>/termux-root-packages
+git clone https://github.com/jitwar/termux-root-packages
 ```
 
 Note that it is also possible to [edit files directly in github](https://help.github.com/en/github/managing-files-in-a-repository/editing-files-in-your-repository), so this step could be skipped.
