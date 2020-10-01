@@ -1,0 +1,11 @@
+--- ./tools/btmgmt.c.orig	2020-09-30 11:58:17.316977464 +0200
++++ ./tools/btmgmt.c	2020-09-30 12:02:15.040977294 +0200
+@@ -1226,7 +1226,7 @@
+ 	}
+ 
+ 	if (!mgmt_send(mgmt, MGMT_OP_READ_CONFIG_INFO, mgmt_index, 0, NULL,
+-				config_info_rsp, UINT_TO_PTR(index), NULL)) {
++				config_info_rsp, UINT_TO_PTR(mgmt_index), NULL)) {
+ 		error("Unable to send read_config_info cmd");
+ 		return bt_shell_noninteractive_quit(EXIT_FAILURE);
+ 	}
