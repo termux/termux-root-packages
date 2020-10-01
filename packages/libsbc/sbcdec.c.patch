@@ -1,0 +1,11 @@
+--- ../sbcdec.c.orig	2020-09-30 11:22:35.116978996 +0200
++++ ./src/sbcdec.c	2020-09-30 11:22:45.464978989 +0200
+@@ -37,7 +37,7 @@
+ #include <getopt.h>
+ #include <sys/stat.h>
+ #include <sys/ioctl.h>
+-#include <sys/soundcard.h>
++#include <linux/soundcard.h>
+ 
+ #include "sbc/sbc.h"
+ #include "formats.h"
