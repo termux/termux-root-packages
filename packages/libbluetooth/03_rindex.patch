@@ -1,0 +1,45 @@
+--- ./tools/obexctl.c.orig	2020-09-30 12:03:39.828977233 +0200
++++ ./tools/obexctl.c	2020-09-30 12:03:55.208977222 +0200
+@@ -1324,13 +1324,13 @@
+ 	const char *source;
+ 	const char *target;
+ 
+-	source = rindex(argv[1], ':');
++	source = strrchr(argv[1], ':');
+ 	if (source == NULL)
+ 		source = argv[1];
+ 	else
+ 		source++;
+ 
+-	target = rindex(argv[2], ':');
++	target = strrchr(argv[2], ':');
+ 	if (target == NULL)
+ 		target = argv[2];
+ 	else
+@@ -1417,7 +1417,7 @@
+ {
+ 	struct cp_args *args;
+ 
+-	if (rindex(argv[2], ':') == NULL)
++	if (strrchr(argv[2], ':') == NULL)
+ 		return ftp_copy(proxy, argc, argv);
+ 
+ 	args = cp_new(argv);
+@@ -1455,7 +1455,7 @@
+ {
+ 	struct cp_args *args;
+ 
+-	if (rindex(argv[2], ':') != NULL) {
++	if (strrchr(argv[2], ':') != NULL) {
+ 		bt_shell_printf("Invalid target file argument\n");
+ 		return bt_shell_noninteractive_quit(EXIT_FAILURE);
+ 	}
+@@ -1473,7 +1473,7 @@
+ 
+ static void ftp_cp(GDBusProxy *proxy, int argc, char *argv[])
+ {
+-	if (rindex(argv[1], ':') == NULL)
++	if (strrchr(argv[1], ':') == NULL)
+ 		return ftp_get(proxy, argc, argv);
+ 
+ 	return ftp_put(proxy, argc, argv);

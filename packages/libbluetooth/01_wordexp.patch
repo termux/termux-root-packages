@@ -1,0 +1,334 @@
+diff -u -r ../tools.orig/btmgmt.c ./tools/btmgmt.c
+--- ../tools.orig/btmgmt.c	2020-09-30 11:35:03.320978461 +0200
++++ ./tools/btmgmt.c	2020-09-30 11:35:18.652978450 +0200
+@@ -38,9 +38,9 @@
+ #include <poll.h>
+ #include <getopt.h>
+ #include <stdbool.h>
+-#include <wordexp.h>
+ #include <ctype.h>
+ 
++#include "tools/wordexp.h"
+ #include "lib/bluetooth.h"
+ #include "lib/hci.h"
+ #include "lib/hci_lib.h"
+diff -u -r ../tools.orig/meshctl.c ./tools/meshctl.c
+--- ../tools.orig/meshctl.c	2020-09-30 11:35:03.320978461 +0200
++++ ./tools/meshctl.c	2020-09-30 11:35:37.348978436 +0200
+@@ -31,7 +31,6 @@
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <stdbool.h>
+-#include <wordexp.h>
+ 
+ #include <inttypes.h>
+ #include <ctype.h>
+@@ -42,6 +41,7 @@
+ 
+ #include <glib.h>
+ 
++#include "tools/wordexp.h"
+ #include "lib/bluetooth.h"
+ #include "lib/uuid.h"
+ #include "src/shared/shell.h"
+diff -u -r ../tools.orig/obexctl.c ./tools/obexctl.c
+--- ../tools.orig/obexctl.c	2020-09-30 11:35:03.332978461 +0200
++++ ./tools/obexctl.c	2020-09-30 11:35:58.324978421 +0200
+@@ -33,11 +33,11 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <inttypes.h>
+-#include <wordexp.h>
+ #include <ctype.h>
+ 
+ #include <glib.h>
+ 
++#include "tools/wordexp.h"
+ #include "gdbus/gdbus.h"
+ #include "src/shared/shell.h"
+ 
+--- ../main.c.orig	2020-09-30 11:37:43.388978346 +0200
++++ ./client/main.c	2020-09-30 11:37:55.024978338 +0200
+@@ -31,10 +31,10 @@
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <stdbool.h>
+-#include <wordexp.h>
+ 
+ #include <glib.h>
+ 
++#include "tools/wordexp.h"
+ #include "src/shared/shell.h"
+ #include "src/shared/util.h"
+ #include "gdbus/gdbus.h"
+--- ../Makefile.tools.orig	2020-09-30 11:53:04.604977687 +0200
++++ ./Makefile.tools	2020-09-30 11:51:55.212977737 +0200
+@@ -440,11 +440,11 @@
+ 				src/libshared-glib.la \
+ 				$(GLIB_LIBS) $(DBUS_LIBS) -lreadline
+ 
+-tools_obexctl_SOURCES = tools/obexctl.c
++tools_obexctl_SOURCES = tools/obexctl.c tools/wordexp.c
+ tools_obexctl_LDADD = gdbus/libgdbus-internal.la src/libshared-glib.la \
+ 				$(GLIB_LIBS) $(DBUS_LIBS) -lreadline
+ 
+-tools_btmgmt_SOURCES = tools/btmgmt.c src/uuid-helper.c client/display.c
++tools_btmgmt_SOURCES = tools/btmgmt.c src/uuid-helper.c client/display.c tools/wordexp.c
+ tools_btmgmt_LDADD = lib/libbluetooth-internal.la src/libshared-mainloop.la \
+ 				-lreadline
+ if DEPRECATED
+# --- ../Makefile.in.orig	2020-09-30 12:09:33.952976980 +0200
+# +++ ./Makefile.in	2020-09-30 13:02:54.941510391 +0200
+# @@ -571,7 +571,7 @@
+#  	src/shared/gatt-server.c src/shared/gatt-db.h \
+#  	src/shared/gatt-db.c src/shared/gap.h src/shared/gap.c \
+#  	src/shared/log.h src/shared/log.c src/shared/tty.h \
+# -	src/shared/shell.c src/shared/shell.h src/shared/io-ell.c \
+# +	src/shared/shell.c tools/wordexp.c src/shared/shell.h src/shared/io-ell.c \
+#  	src/shared/timeout-ell.c src/shared/mainloop.h \
+#  	src/shared/mainloop-ell.c
+#  @READLINE_TRUE@am__objects_5 = src/shared/shell.lo
+# @@ -608,7 +608,7 @@
+#  	src/shared/gatt-server.c src/shared/gatt-db.h \
+#  	src/shared/gatt-db.c src/shared/gap.h src/shared/gap.c \
+#  	src/shared/log.h src/shared/log.c src/shared/tty.h \
+# -	src/shared/shell.c src/shared/shell.h src/shared/io-glib.c \
+# +	src/shared/shell.c tools/wordexp.c src/shared/shell.h src/shared/io-glib.c \
+#  	src/shared/timeout-glib.c src/shared/mainloop-glib.c \
+#  	src/shared/mainloop-notify.h src/shared/mainloop-notify.c
+#  am_src_libshared_glib_la_OBJECTS = $(am__objects_6) \
+# @@ -633,7 +633,7 @@
+#  	src/shared/gatt-server.c src/shared/gatt-db.h \
+#  	src/shared/gatt-db.c src/shared/gap.h src/shared/gap.c \
+#  	src/shared/log.h src/shared/log.c src/shared/tty.h \
+# -	src/shared/shell.c src/shared/shell.h src/shared/io-mainloop.c \
+# +	src/shared/shell.c tools/wordexp.c src/shared/shell.h src/shared/io-mainloop.c \
+#  	src/shared/timeout-mainloop.c src/shared/mainloop.h \
+#  	src/shared/mainloop.c src/shared/mainloop-notify.h \
+#  	src/shared/mainloop-notify.c
+# @@ -3083,6 +3083,7 @@
+#  
+#  src_libshared_mainloop_la_SOURCES = $(shared_sources) \
+#  				src/shared/io-mainloop.c \
+# +				tools/wordexp.c \
+#  				src/shared/timeout-mainloop.c \
+#  				src/shared/mainloop.h src/shared/mainloop.c \
+#  				src/shared/mainloop-notify.h \
+--- ../shell.c.orig	2020-09-30 11:40:20.356978234 +0200
++++ ./src/shared/shell.c	2020-09-30 13:08:27.693510153 +0200
+@@ -35,12 +35,12 @@
+ #include <stdbool.h>
+ #include <signal.h>
+ #include <sys/signalfd.h>
+-#include <wordexp.h>
+ #include <getopt.h>
+ 
+ #include <readline/readline.h>
+ #include <readline/history.h>
+ 
++#include "tools/wordexp.h"
+ #include "src/shared/mainloop.h"
+ #include "src/shared/timeout.h"
+ #include "src/shared/io.h"
+@@ -101,6 +101,201 @@
+ static void shell_print_menu(void);
+ static void shell_print_menu_zsh_complete(void);
+ 
++#include <unistd.h>
++#include <stdio.h>
++#include <string.h>
++#include <limits.h>
++#include <stdint.h>
++#include <stdlib.h>
++#include <sys/wait.h>
++#include <signal.h>
++#include <errno.h>
++#include <fcntl.h>
++//##include <bthread.h>
++#include <sys/types.h>
++static void reap(pid_t pid)
++{
++	int status;
++	for (;;) {
++		if (waitpid(pid, &status, 0) < 0) {
++			if (errno != EINTR) return;
++		} else {
++			if (WIFEXITED(status)) return;
++		}
++	}
++}
++
++static char *getword(FILE *f)
++{
++	char *s = 0;
++	return getdelim(&s, (size_t [1]){0}, 0, f) < 0 ? 0 : s;
++}
++
++static int do_wordexp(const char *s, wordexp_t *we, int flags)
++{
++	size_t i, l;
++	int sq=0, dq=0;
++	size_t np=0;
++	char *w, **tmp;
++	char *redir = (flags & WRDE_SHOWERR) ? "" : "2>/dev/null";
++	int err = 0;
++	FILE *f;
++	size_t wc = 0;
++	char **wv = 0;
++	int p[2];
++	pid_t pid;
++	sigset_t set;
++	sigset_t all_set;
++	if (flags & WRDE_REUSE) wordfree(we);
++
++	if (flags & WRDE_NOCMD) for (i=0; s[i]; i++) switch (s[i]) {
++	case '\\':
++		if (!sq) i++;
++		break;
++	case '\'':
++		if (!dq) sq^=1;
++		break;
++	case '"':
++		if (!sq) dq^=1;
++		break;
++	case '(':
++		if (np) {
++			np++;
++			break;
++		}
++	case ')':
++		if (np) {
++			np--;
++			break;
++		}
++	case '\n':
++	case '|':
++	case '&':
++	case ';':
++	case '<':
++	case '>':
++	case '{':
++	case '}':
++		if (!(sq|dq|np)) return WRDE_BADCHAR;
++		break;
++	case '$':
++		if (sq) break;
++		if (s[i+1]=='(' && s[i+2]=='(') {
++			i += 2;
++			np += 2;
++			break;
++		} else if (s[i+1] != '(') break;
++	case '`':
++		if (sq) break;
++		return WRDE_CMDSUB;
++	}
++
++	if (flags & WRDE_APPEND) {
++		wc = we->we_wordc;
++		wv = we->we_wordv;
++	}
++
++	i = wc;
++	if (flags & WRDE_DOOFFS) {
++		if (we->we_offs > SIZE_MAX/sizeof(void *)/4)
++			goto nospace;
++		i += we->we_offs;
++	} else {
++		we->we_offs = 0;
++	}
++
++	if (pipe2(p, O_CLOEXEC) < 0) goto nospace;
++//	sigfillset(&all_set);
++//	sigprocmask(SIG_SETMASK, &all_set, &set);
++	pid = fork();
++//	sigprocmask(SIG_SETMASK, &set, &all_set);
++	if (pid < 0) {
++		close(p[0]);
++		close(p[1]);
++		goto nospace;
++	}
++	if (!pid) {
++		if (p[1] == 1) fcntl(1, F_SETFD, 0);
++		else dup2(p[1], 1);
++		execl("/data/data/com.termux/files/usr/bin/sh", "sh", "-c",
++			"eval \"printf %s\\\\\\\\0 x $1 $2\"",
++			"sh", s, redir, (char *)0);
++		_exit(1);
++	}
++	close(p[1]);
++	
++	f = fdopen(p[0], "r");
++	if (!f) {
++		close(p[0]);
++		kill(pid, SIGKILL);
++		reap(pid);
++		goto nospace;
++	}
++
++	l = wv ? i+1 : 0;
++
++	free(getword(f));
++	if (feof(f)) {
++		fclose(f);
++		reap(pid);
++		return WRDE_SYNTAX;
++	}
++
++	while ((w = getword(f))) {
++		if (i+1 >= l) {
++			l += l/2+10;
++			tmp = realloc(wv, l*sizeof(char *));
++			if (!tmp) break;
++			wv = tmp;
++		}
++		wv[i++] = w;
++		wv[i] = 0;
++	}
++	if (!feof(f)) err = WRDE_NOSPACE;
++
++	fclose(f);
++	reap(pid);
++
++	if (!wv) wv = calloc(i+1, sizeof *wv);
++
++	we->we_wordv = wv;
++	we->we_wordc = i;
++
++	if (flags & WRDE_DOOFFS) {
++		if (wv) for (i=we->we_offs; i; i--)
++			we->we_wordv[i-1] = 0;
++		we->we_wordc -= we->we_offs;
++	}
++	return err;
++
++nospace:
++	if (!(flags & WRDE_APPEND)) {
++		we->we_wordc = 0;
++		we->we_wordv = 0;
++	}
++	return WRDE_NOSPACE;
++}
++
++
++int wordexp(const char *restrict s, wordexp_t *restrict we, int flags)
++{
++	int r, cs;
++	//pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &cs);
++	r = do_wordexp(s, we, flags);
++	//pthread_setcancelstate(cs, 0);
++	return r;
++}
++
++void wordfree(wordexp_t *we)
++{
++	size_t i;
++	if (!we->we_wordv) return;
++	for (i=0; i<we->we_wordc; i++) free(we->we_wordv[we->we_offs+i]);
++	free(we->we_wordv);
++	we->we_wordv = 0;
++	we->we_wordc = 0;
++}
++
+ static void cmd_version(int argc, char *argv[])
+ {
+ 	bt_shell_printf("Version %s\n", VERSION);
