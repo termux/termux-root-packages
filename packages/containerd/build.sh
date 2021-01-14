@@ -6,6 +6,7 @@ TERMUX_PKG_VERSION=1.4.3
 TERMUX_PKG_SRCURL=https://github.com/containerd/containerd/archive/v${TERMUX_PKG_VERSION}.tar.gz
 TERMUX_PKG_SHA256=bc6d9452c700af0ebc09c0da8ddba55be4c03ac8928e72ca92d98905800c8018
 TERMUX_PKG_DEPENDS="runc"
+TERMUX_PKG_BLACKLISTED_ARCHES="i686"
 
 termux_step_make() {
 	# setup go build environment
