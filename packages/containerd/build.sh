@@ -28,6 +28,7 @@ termux_step_make() {
 }
 
 termux_step_make_install() {
+	cd "${GOPATH}/src/github.com/containerd/containerd"
 	DESTDIR=${TERMUX_PREFIX} make install
 	DESTDIR=${TERMUX_PREFIX}/share make install-man
 	install -Dm 600 ${TERMUX_PKG_BUILDER_DIR}/config.toml ${TERMUX_PREFIX}/etc/containerd/config.toml
