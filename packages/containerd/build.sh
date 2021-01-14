@@ -22,7 +22,9 @@ termux_step_make() {
 	# issue the build command
 	export BUILDTAGS=no_btrfs
 	make -j ${TERMUX_MAKE_PROCESSES}
-	make -j ${TERMUX_MAKE_PROCESSES} man
+	(unset CFLAGS LDFLAGS CXXFLAGS GOOS GOARCH GOARM CGO_ENABLED GO_LDFLAGS CGO_LDFLAGS
+	make -j ${TERMUX_MAKE_PROCESSES} man)
+
 }
 
 termux_step_make_install() {
