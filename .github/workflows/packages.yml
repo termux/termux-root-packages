@@ -87,7 +87,7 @@ jobs:
     - name: Store *.deb files
       uses: actions/upload-artifact@v1
       with:
-        name: termux-packages
+        name: termux-root-packages
         path: ./artifacts
   upload:
     if: github.event_name != 'pull_request'
@@ -99,7 +99,7 @@ jobs:
     - name: Get *.deb files
       uses: actions/download-artifact@v1
       with:
-        name: termux-packages
+        name: termux-root-packages
         path: ./
     - name: Upload to bintray.com
       env:
