@@ -160,22 +160,3 @@ jobs:
         sftp -P ${{ secrets.PORT }} ${{ secrets.USER }}@grimler.se <<EOF
           put $archive /debs/
         EOF
-    - name: Upload to bintray.com
-      env:
-        BINTRAY_USERNAME: grimler
-        BINTRAY_API_KEY: ${{ secrets.BINTRAY_API_KEY }}
-        BINTRAY_GPG_PASSPHRASE: ${{ secrets.BINTRAY_GPG_PASSWORD }}
-      run: |
-        for i in debs-*.tar; do
-          tar xf $i
-        done
-        # Purging debfiles of removed packages.
-        TO_DELETE=$(test -f ./debs/deleted_packages.txt && cat ./debs/deleted_packages.txt || true)
-        if [ -n "$TO_DELETE" ]; then
-          ./scripts/package_uploader.sh -d $TO_DELETE
-        fi
-        # Uploading modified packages.
-        TO_UPLOAD=$(test -f ./debs/built_packages.txt && cat ./debs/built_packages.txt || true)
-        if [ -n "$TO_UPLOAD" ]; then
-          ./scripts/package_uploader.sh -p ./debs $TO_UPLOAD
-        fi

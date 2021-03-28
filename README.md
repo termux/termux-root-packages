@@ -1,7 +1,5 @@
 # Termux root packages
 
-[![Powered by JFrog Bintray](./.github/static/powered-by-bintray.png)](https://bintray.com)
-
 [![Last build status](https://github.com/termux/termux-root-packages/workflows/Packages/badge.svg)](https://github.com/termux/termux-root-packages/actions)
 
 This repository contains packages that are only useful for rooted users.
