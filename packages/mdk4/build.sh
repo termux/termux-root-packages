@@ -1,20 +1,10 @@
-#MDK is a proof-of-concept tool to exploit common IEEE 802.11 protocol weaknesses.
-# MDK4 is a new version of MDK3.
-
-#MDK4 is a Wi-Fi testing tool from E7mer of 360, ASPj of k2wrlz, it uses the osdep library from the aircrack-ng project to inject frames on several operating systems. Many parts of it have been contributed by the great aircrack-ng community: Antragon, moongray, Ace, Zero_Chaos, Hirte, thefkboss, ducttape, telek0miker, Le_Vert, sorbo, Andy Green, bahathir, Dawid Gajownik and Ruslan Nabioullin. THANK YOU!
-
-#MDK4 is licenced under the GPLv2 or later.
-
-TERMUX_PKG_MAINTAINER="KimoCoder & Ezmer "
+TERMUX_PKG_MAINTAINER="@termux"
 TERMUX_PKG_HOMEPAGE=https://github.com/aircrack-ng/mdk4
 TERMUX_PKG_DESCRIPTION="MDK is a proof-of-concept tool to exploit common IEEE 802.11 protocol weaknesses."
 TERMUX_PKG_LICENSE="GPL-3.0"
-
-
 TERMUX_PKG_VERSION=4.1
-TERMUX_PKG_REVISION=1
-TERMUX_PKG_SRCURL=https://github.com/aircrack-ng/mdk4/archive/master.zip
-TERMUX_PKG_SHA256=48708cbf07b324b689b6449ebea10ff2bba5f41e474d63583511812fe5829290
-TERMUX_PKG_DEPENDS="aircrack-ng, pkg-config, libnl, libpcap"
+TERMUX_PKG_REVISION=
+TERMUX_PKG_SRCURL=https://github.com/aircrack-ng/mdk4/archive/fc03b0ece893fd8d3f546d915511f01ba3faebc8.zip
+TERMUX_PKG_SHA256=fdbefff87b29710374e7bef3682e36dd5cda074091447fd7300bb26ac8a62839
+TERMUX_PKG_DEPENDS="aircrack-ng, libnl, libpcap"
 TERMUX_PKG_BUILD_IN_SRC=true
-
