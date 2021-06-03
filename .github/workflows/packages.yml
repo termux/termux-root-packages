@@ -140,23 +140,121 @@ jobs:
       with:
         name: termux-root-packages-${{ github.sha }}
         path: ./
-    - name: Setup ssh key and known_hosts
+    - name: Upload to packages.termux.org
       env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
+        REPOSITORY_NAME: termux-root
+        REPOSITORY_DISTRIBUTION: root
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.KNOWN_HOST_ENTRY }}" >> ~/.ssh/known_hosts
-        ssh-agent -a $SSH_AUTH_SOCK
-        ssh-add - <<< "${{ secrets.SSHKEY }}"
-    - name: Upload to grimler.se
-      env:
-        SSH_AUTH_SOCK: /tmp/ssh_agent.sock
-      run: |
-        # Zip the deb archives to only do one transfer to the repo.
-        # This makes it easier to parse it, we can run one update job
-        # instead of one for each arch on the server.
-        archive="termux-root-packages-${{ github.sha }}.zip"
-        zip $archive debs-*-${{ github.sha }}.tar
-        sftp -P ${{ secrets.PORT }} ${{ secrets.USER }}@grimler.se <<EOF
-          put $archive /debs/
-        EOF
+        for archive in *.tar; do
+          tar xf "$archive"
+        done
+
+        # Function for deleting temporary directory with uploaded files from
+        # the server.
+        aptly_delete_dir() {
+          echo "[*] Deleting uploads temporary directory."
+
+          curl_response=$(
+            curl \
+              --silent \
+              --user "${{ secrets.APTLY_API_AUTH }}" \
+              --request DELETE \
+              --write-out "|%{http_code}" \
+              https://packages.termux.org/aptly-api/files/${REPOSITORY_NAME}-${{ github.sha }}
+          )
+
+          http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
+
+          if [ "$http_status_code" != "200" ]; then
+            echo "[!] Server returned $http_status_code code while deleting temporary directory."
+          fi
+        }
+
+        # Upload file to temporary directory.
+        uploaded_files=false
+        for filename in debs/*.deb; do
+          curl_response=$(
+            curl \
+              --silent \
+              --user "${{ secrets.APTLY_API_AUTH }}" \
+              --request POST \
+              --form file=@${filename} \
+              --write-out "|%{http_code}" \
+              https://packages.termux.org/aptly-api/files/${REPOSITORY_NAME}-${{ github.sha }}
+          )
+
+          http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
+
+          if [ "$http_status_code" = "200" ]; then
+            echo "[*] Uploaded: $(echo "$curl_response" | cut -d'|' -f1 | jq -r '.[]' | cut -d'/' -f2)"
+          else
+            # Manually cleaning up the temporary directory to reclaim disk space.
+            # Don't rely on scheduled server-side scripts.
+            echo "[!] Failed to upload '$filename'. Server returned $http_status_code code."
+            echo "[!] Aborting any further uploads."
+            aptly_delete_dir
+            exit 1
+          fi
+
+          uploaded_files=true
+        done
+
+        # Publishing repository changes.
+        if [ "$uploaded_files" = "true" ]; then
+          echo "[*] Adding packages to repository '$REPOSITORY_NAME'..."
+
+          curl_response=$(
+            curl \
+              --silent \
+              --user "${{ secrets.APTLY_API_AUTH }}" \
+              --request POST \
+              --write-out "|%{http_code}" \
+              https://packages.termux.org/aptly-api/repos/${REPOSITORY_NAME}/file/${REPOSITORY_NAME}-${{ github.sha }}
+          )
+
+          http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
+
+          if [ "$http_status_code" = "200" ]; then
+            warnings=$(echo "$curl_response" | cut -d'|' -f1 | jq '.Report.Warnings' | jq -r '.[]')
+            if [ -n "$warnings" ]; then
+              echo "[!] WARNINGS (NON-CRITICAL):"
+              echo
+              echo "$warnings"
+              echo
+            fi
+
+            # Upload directory is usually deleted automatically once all deb
+            # files were added without issues. Attempting to do this manually
+            # in case it left for some reason (e.g. some debs not added due to
+            # conflicts).
+            aptly_delete_dir
+          else
+            echo "[*] Server returned $http_status_code. Not publishing repository!"
+            aptly_delete_dir
+            exit 1
+          fi
+
+          # Final part to make changes appear in web root.
+          echo "[*] Publishing repository changes..."
+
+          curl_response=$(
+            curl \
+              --silent \
+              --user "${{ secrets.APTLY_API_AUTH }}" \
+              --header 'Content-Type: application/json' \
+              --request PUT \
+              --data '{"Signing": {"Passphrase": "${{ secrets.GPG_PASSPHRASE }}"}}' \
+              --write-out "|%{http_code}" \
+              https://packages.termux.org/aptly-api/publish/${REPOSITORY_NAME}/${REPOSITORY_DISTRIBUTION}
+          )
+
+          http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
+
+          if [ "$http_status_code" = "200" ]; then
+            echo "[*] Repository updated successfully."
+          else
+            # Note: may return error 500 if gpg signing failed.
+            echo "[*] Server returned $http_status_code."
+            exit 1
+          fi
+        fi
