@@ -5,7 +5,7 @@
  		return filepath.Join(os.Getenv("ALLUSERSPROFILE"), "bettercap")
  	}
 -	return "/usr/local/share/bettercap/"
-+	return "@TERMUX_PREFIX@/local/share/bettercap/"
++	return "@TERMUX_PREFIX@/share/bettercap/"
  }
  
  func getUserHomeDir() string {
@@ -18,7 +18,7 @@ index f5d6950..4059c6c 100644
  
  	mod.AddParam(session.NewStringParameter("ui.basepath",
 -		"/usr/local/share/bettercap/",
-+		"@TERMUX_PREFIX@/local/share/bettercap/",
++		"@TERMUX_PREFIX@/share/bettercap/",
  		"",
  		"UI base installation path."))
  
