@@ -19,17 +19,12 @@ jobs:
     strategy:
       matrix:
         target_arch: [aarch64, arm, i686, x86_64]
+      fail-fast: false
     steps:
     - name: Clone repository
       uses: actions/checkout@v2
       with:
         fetch-depth: 1000
-    - name: Free additional disk space on host
-      run: |
-        sudo apt purge -yq $(dpkg -l | grep '^ii' | awk '{ print $2 }' | grep -P '(cabal-|dotnet-|ghc-|libmono|php)') \
-          liblldb-6.0 libllvm6.0:amd64 mono-runtime-common monodoc-manual powershell ruby
-        sudo apt autoremove -yq
-        sudo rm -rf /usr/local
     - name: Build
       run: |
         BASE_COMMIT=$(jq --raw-output .pull_request.base.sha "$GITHUB_EVENT_PATH")
@@ -107,7 +102,7 @@ jobs:
 
         if [ -f ./built_packages.txt ]; then
           ./scripts/lint-packages.sh $(cat ./built_packages.txt | awk '{print "packages/"$1"/build.sh"}')
-          ./start-builder.sh ./build-package.sh -a ${{ matrix.target_arch }} -I $(cat ./built_packages.txt)
+          ./start-builder.sh ./build-package.sh -I -a ${{ matrix.target_arch }} $(cat ./built_packages.txt)
         fi
 
         test -d ./termux-packages/debs && mv ./termux-packages/debs/* ./debs/
@@ -238,25 +233,24 @@ jobs:
 
           # Final part to make changes appear in web root.
           echo "[*] Publishing repository changes..."
+          set +e
+          curl \
+            --silent \
+            --user "${{ secrets.APTLY_API_AUTH }}" \
+            --header 'Content-Type: application/json' \
+            --request PUT \
+            --data '{"Signing": {"Passphrase": "${{ secrets.GPG_PASSPHRASE }}"}}' \
+            https://packages.termux.org/aptly-api/publish/${REPOSITORY_NAME}/${REPOSITORY_DISTRIBUTION}
+          exit_code=$?
+          echo
 
-          curl_response=$(
-            curl \
-              --silent \
-              --user "${{ secrets.APTLY_API_AUTH }}" \
-              --header 'Content-Type: application/json' \
-              --request PUT \
-              --data '{"Signing": {"Passphrase": "${{ secrets.GPG_PASSPHRASE }}"}}' \
-              --write-out "|%{http_code}" \
-              https://packages.termux.org/aptly-api/publish/${REPOSITORY_NAME}/${REPOSITORY_DISTRIBUTION}
-          )
-
-          http_status_code=$(echo "$curl_response" | cut -d'|' -f2)
-
-          if [ "$http_status_code" = "200" ]; then
+          if [ "$exit_code" = 0 ]; then
             echo "[*] Repository updated successfully."
+          elif [ "$exit_code" = 52 ]; then
+            echo "[!] Repository update takes more time than expected, server returned empty response."
+            echo "[!] This is expected if large amount of data has been submitted."
           else
-            # Note: may return error 500 if gpg signing failed.
-            echo "[*] Server returned $http_status_code."
-            exit 1
+            echo "[!] curl exited with error code $exit_status."
+            exit "$exit_code"
           fi
         fi
