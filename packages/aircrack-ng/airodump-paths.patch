@@ -1,0 +1,29 @@
+--- ./src/airodump-ng/airodump-ng.c~	2021-10-23 17:40:49.383666300 +0200
++++ ./src/airodump-ng/airodump-ng.c	2021-10-23 17:43:16.367060369 +0200
+@@ -99,16 +99,16 @@
+ 
+ static const char * OUI_PATHS[]
+ 	= {"./airodump-ng-oui.txt",
+-	   "/etc/aircrack-ng/airodump-ng-oui.txt",
+-	   "/usr/local/etc/aircrack-ng/airodump-ng-oui.txt",
+-	   "/usr/share/aircrack-ng/airodump-ng-oui.txt",
+-	   "/var/lib/misc/oui.txt",
+-	   "/usr/share/misc/oui.txt",
+-	   "/var/lib/ieee-data/oui.txt",
+-	   "/usr/share/ieee-data/oui.txt",
+-	   "/etc/manuf/oui.txt",
+-	   "/usr/share/wireshark/wireshark/manuf/oui.txt",
+-	   "/usr/share/wireshark/manuf/oui.txt",
++	   "@TERMUX_PREFIX@/etc/aircrack-ng/airodump-ng-oui.txt",
++	   "@TERMUX_PREFIX@/local/etc/aircrack-ng/airodump-ng-oui.txt",
++	   "@TERMUX_PREFIX@/share/aircrack-ng/airodump-ng-oui.txt",
++	   "@TERMUX_PREFIX@/var/lib/misc/oui.txt",
++	   "@TERMUX_PREFIX@/share/misc/oui.txt",
++	   "@TERMUX_PREFIX@/var/lib/ieee-data/oui.txt",
++	   "@TERMUX_PREFIX@/share/ieee-data/oui.txt",
++	   "@TERMUX_PREFIX@/etc/manuf/oui.txt",
++	   "@TERMUX_PREFIX@/share/wireshark/wireshark/manuf/oui.txt",
++	   "@TERMUX_PREFIX@/share/wireshark/manuf/oui.txt",
+ 	   NULL};
+ 
+ static int read_pkts = 0;

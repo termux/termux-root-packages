@@ -1,0 +1,13 @@
+--- ./src/airodump-ng/airodump-ng.c~	2020-01-25 21:20:25.000000000 +0100
++++ ./src/airodump-ng/airodump-ng.c	2021-10-23 17:40:49.383666300 +0200
+@@ -92,8 +92,8 @@
+ #include "radiotap/radiotap_iter.h"
+ 
+ struct devices dev;
+-uint8_t h80211[4096] __attribute__((aligned(16)));
+-uint8_t tmpbuf[4096] __attribute__((aligned(16)));
++extern uint8_t h80211[4096] __attribute__((aligned(16)));
++extern uint8_t tmpbuf[4096] __attribute__((aligned(16)));
+ 
+ static const unsigned char llcnull[] = {0, 0, 0, 0};
+ 
