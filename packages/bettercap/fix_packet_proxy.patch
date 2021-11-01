@@ -1,0 +1,43 @@
+diff -r -u --new-file bettercap-2.32.0/modules/packet_proxy/packet_proxy_android.go bettercap-2.32.1/modules/packet_proxy/packet_proxy_android.go
+--- bettercap-2.32.0/modules/packet_proxy/packet_proxy_android.go	1970-01-01 03:00:00.000000000 +0300
++++ bettercap-2.32.0.new/modules/packet_proxy/packet_proxy_android.go	2021-11-01 13:38:37.000000000 +0200
+@@ -0,0 +1,39 @@
++package packet_proxy
++
++import (
++	"github.com/bettercap/bettercap/session"
++)
++
++type PacketProxy struct {
++	session.SessionModule
++}
++
++func NewPacketProxy(s *session.Session) *PacketProxy {
++	return &PacketProxy{
++		SessionModule: session.NewSessionModule("packet.proxy", s),
++	}
++}
++
++func (mod PacketProxy) Name() string {
++	return "packet.proxy"
++}
++
++func (mod PacketProxy) Description() string {
++	return "Not supported on this OS"
++}
++
++func (mod PacketProxy) Author() string {
++	return "Simone Margaritelli <evilsocket@gmail.com>"
++}
++
++func (mod *PacketProxy) Configure() (err error) {
++	return session.ErrNotSupported
++}
++
++func (mod *PacketProxy) Start() error {
++	return session.ErrNotSupported
++}
++
++func (mod *PacketProxy) Stop() error {
++	return session.ErrNotSupported
++}
