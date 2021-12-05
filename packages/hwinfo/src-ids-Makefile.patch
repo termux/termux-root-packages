@@ -20,3 +20,14 @@ diff -uNr hwinfo-21.60/src/ids/Makefile hwinfo-21.60.mod/src/ids/Makefile
 +hd_ids_tiny.h: check_hd check_hd_host hd.ids
 +	./check_hd_host --mini --cfile hd_ids_tiny.h --log=hd_tiny.log --out=hd_tiny.ids hd.ids
  
+--- ./src/ids/Makefile.orig	2021-12-05 15:44:58.278541563 +0100
++++ ./src/ids/Makefile	2021-12-05 15:45:06.678535356 +0100
+@@ -48,7 +48,7 @@
+ IDFILES += src/pci src/storage src/sound src/mouse src/braille
+ 
+ $(LIBHD_D): hd_ids.o
+-	ar r $(LIBHD) $?
++	$(AR) r $(LIBHD) $?
+ 
+ check_hd: check_hd.c
+ 	$(CC) $(CFLAGS) $< -o $@
