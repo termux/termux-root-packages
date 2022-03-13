@@ -195,8 +195,8 @@ jobs:
       # Run even if upload to packages.termux.org failed:
       if: always()
       env:
-        REPOSITORY_NAME: termux-main
-        REPOSITORY_DISTRIBUTION: stable
+        REPOSITORY_NAME: termux-root
+        REPOSITORY_DISTRIBUTION: root
         REPOSITORY_URL: https://aptly-api.grimler.se
       run: |
         GITHUB_SHA=${{ github.sha }}
