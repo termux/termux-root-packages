@@ -159,6 +159,7 @@ jobs:
       run: |
         GITHUB_SHA=${{ github.sha }}
         APTLY_API_AUTH=${{ secrets.APTLY_API_AUTH }}
+        GPG_PASSPHRASE=${{ secrets.GPG_PASSPHRASE }}
 
         git submodule update --init
         source termux-packages/scripts/aptly_api.sh
