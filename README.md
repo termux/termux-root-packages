@@ -2,7 +2,7 @@
 
 [![Last build status](https://github.com/termux/termux-root-packages/workflows/Packages/badge.svg)](https://github.com/termux/termux-root-packages/actions)
 
-[![Powered by FossHost](./.github/static/powered-by-fosshost.png)](https://fosshost.org)
+<img src=".github/static/powered-by-fosshost.png" alt="Powered by FossHost" width="128px"></img>
 
 This repository contains packages that are only useful for rooted users.
 
