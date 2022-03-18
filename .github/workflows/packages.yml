@@ -121,7 +121,7 @@ jobs:
           ./start-builder.sh ./build-package.sh -o ./debs -I -a ${{ matrix.target_arch }} $(cat ./built_packages.txt)
         fi
 
-        test -d ./termux-packages/debs && mv ./termux-packages/debs/* ./debs/
+        test -d ./termux-packages/debs && find ./termux-packages/debs/ -mindepth 1 -maxdepth 1 ! -name ".*" -exec mv "{}" ./debs/ \;
         # Put package lists into directory with *.deb files so they will be transferred to
         # upload job.
         test -f ./built_packages.txt && mv ./built_packages.txt ./debs/
