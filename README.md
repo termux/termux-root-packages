@@ -1,3 +1,7 @@
+# ARCHIVED
+
+Packages from root-repo are now maintained along with the main repo in https://github.com/termux/termux-packages in a git monorep
+
 # Termux root packages
 
 [![Last build status](https://github.com/termux/termux-root-packages/workflows/Packages/badge.svg)](https://github.com/termux/termux-root-packages/actions)
